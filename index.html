@@ -164,10 +164,14 @@
     border-color:var(--gold-dim);
     color:var(--ink);
   }
-  .tab-btn.active[data-tab="pokemon"] .dot{background:var(--poke-red); box-shadow:0 0 6px var(--poke-red);}
-  .tab-btn.active[data-tab="onepiece"] .dot{background:var(--op-crimson); box-shadow:0 0 6px var(--op-crimson);}
-  .tab-btn.active[data-tab="overview"] .dot{background:var(--gold); box-shadow:0 0 6px var(--gold);}
-  .tab-btn.active[data-tab="phguide"] .dot{background:var(--ph-blue); box-shadow:0 0 6px var(--ph-blue);}
+  .tab-btn.active[data-tab="pokemon"] svg{color:var(--poke-red);}
+  .tab-btn.active[data-tab="onepiece"] svg{color:var(--op-crimson);}
+  .tab-btn.active[data-tab="overview"] svg{color:var(--gold);}
+  .tab-btn.active[data-tab="phguide"] svg{color:var(--ph-blue);}
+  .tab-btn.active[data-tab="calendar"] svg{color:var(--gold);}
+  .tab-btn.active[data-tab="analytics"] svg{color:var(--green);}
+  .tab-btn.active[data-tab="verdicts"] svg{color:var(--gold);}
+  .tab-btn svg{color:var(--ink-faint); transition:color .15s ease;}
 
   main{max-width:1180px; margin:0 auto; padding:8px 20px 40px;}
   .panel{display:none;}
@@ -795,49 +799,212 @@
   .calc-total{display:flex; justify-content:space-between; font-size:15px; font-weight:700; padding-top:10px; margin-top:6px; border-top:1px solid var(--line); color:var(--gold);}
   .calc-warn{font-size:11px; color:var(--red); margin-top:10px; line-height:1.5;}
 
-  /* ---------- Portfolio ---------- */
-  .pf-add-card{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; margin-bottom:16px;}
-  .pf-grid{display:grid; grid-template-columns:2fr 1fr 1fr auto; gap:8px; align-items:end;}
-  @media(max-width:600px){.pf-grid{grid-template-columns:1fr 1fr;}}
-  .pf-btn{
-    background:var(--gold);
-    color:#1a1305;
-    border:none;
-    border-radius:7px;
-    padding:10px 16px;
-    font-family:'Space Grotesk',sans-serif;
-    font-weight:700;
-    font-size:13px;
-    cursor:pointer;
-    white-space:nowrap;
+  /* ================= V2: HOLO, HERO, SPARKLINES, SEARCH ================= */
+
+  /* ---------- Holo-foil interactive effect ---------- */
+  .holo{ position:relative; overflow:hidden; }
+  .holo::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity:0;
+    z-index:5;
+    background:
+      radial-gradient(circle at var(--mx,50%) var(--my,50%),
+        rgba(255,255,255,0.16) 0%,
+        rgba(232,179,74,0.14) 12%,
+        rgba(61,110,242,0.12) 26%,
+        rgba(194,58,75,0.10) 40%,
+        transparent 62%);
+    mix-blend-mode:screen;
+    transition:opacity .25s ease;
   }
-  .pf-btn:hover{background:#f0c469;}
-  .pf-btn.secondary{background:var(--surface-2); color:var(--ink-dim); border:1px solid var(--line);}
-  .pf-summary{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px;}
-  @media(max-width:600px){.pf-summary{grid-template-columns:1fr;}}
-  .pf-stat{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px;}
-  .pf-stat .num{font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:700;}
-  .pf-stat .lbl{font-size:10.5px; color:var(--ink-faint); margin-top:3px;}
-  .pf-row{
-    display:grid;
-    grid-template-columns:2fr 1fr 1fr 1fr auto;
+  .holo::after{
+    content:'';
+    position:absolute; inset:0;
+    pointer-events:none;
+    opacity:0;
+    z-index:6;
+    background:linear-gradient(
+      115deg,
+      transparent 30%,
+      rgba(255,255,255,0.10) 42%,
+      rgba(232,179,74,0.16) 48%,
+      rgba(61,110,242,0.12) 54%,
+      transparent 66%
+    );
+    background-size:250% 250%;
+    background-position:var(--mx,50%) var(--my,50%);
+    transition:opacity .25s ease;
+  }
+  .holo:hover::before, .holo:hover::after{ opacity:1; }
+  .holo:hover{ border-color:var(--gold-dim); transform:translateY(-1px); transition:transform .2s ease, border-color .2s ease; }
+
+  /* ---------- Hero banner ---------- */
+  .hero{
+    position:relative;
+    margin:26px 0 8px;
+    padding:38px 24px;
+    border-radius:16px;
+    border:1px solid var(--line);
+    background:
+      radial-gradient(600px 260px at 85% -10%, rgba(232,179,74,0.10), transparent 60%),
+      radial-gradient(500px 240px at 5% 110%, rgba(61,110,242,0.10), transparent 60%),
+      var(--surface);
+    overflow:hidden;
+  }
+  .hero-stack{
+    position:absolute;
+    right:-20px; top:50%;
+    transform:translateY(-50%);
+    width:220px; height:220px;
+    pointer-events:none;
+  }
+  .hero-card{
+    position:absolute;
+    width:120px; height:168px;
+    border-radius:10px;
+    border:1px solid rgba(232,179,74,0.35);
+    background:linear-gradient(145deg, var(--surface-2), var(--surface));
+    box-shadow:0 12px 30px rgba(0,0,0,0.35);
+  }
+  .hero-card::after{
+    content:'';
+    position:absolute; inset:0;
+    border-radius:10px;
+    background:linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.14) 35%, rgba(232,179,74,0.22) 45%, rgba(61,110,242,0.18) 55%, rgba(194,58,75,0.14) 65%, transparent 80%);
+    background-size:200% 200%;
+    animation:holoSweep 5s ease-in-out infinite;
+  }
+  .hero-card.c1{ top:14px; left:64px; transform:rotate(-12deg); z-index:1; }
+  .hero-card.c2{ top:26px; left:32px; transform:rotate(-2deg); z-index:2; }
+  .hero-card.c3{ top:14px; left:0px; transform:rotate(9deg); z-index:3; }
+  @keyframes holoSweep{
+    0%,100%{ background-position:0% 0%; }
+    50%{ background-position:100% 100%; }
+  }
+  .hero-content{ position:relative; z-index:2; max-width:560px; }
+  .hero-eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--gold);
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .hero-title{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(22px,4vw,30px);
+    font-weight:700;
+    line-height:1.15;
+    margin-bottom:10px;
+  }
+  .hero-title span{ color:var(--gold); }
+  .hero-sub{ font-size:13.5px; color:var(--ink-dim); line-height:1.6; max-width:460px; }
+  @media(max-width:760px){ .hero-stack{ display:none; } }
+
+  /* ---------- Sparklines ---------- */
+  .spark{ display:block; margin-top:6px; }
+  .spark path.fill{ opacity:0.16; }
+
+  /* ---------- Search / filter bar ---------- */
+  .search-row{
+    display:flex;
     gap:8px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .search-input-wrap{
+    flex:1;
+    min-width:180px;
+    position:relative;
+    display:flex;
     align-items:center;
+  }
+  .search-input-wrap svg{ position:absolute; left:12px; width:14px; height:14px; color:var(--ink-faint); pointer-events:none; }
+  .search-input{
+    width:100%;
     background:var(--surface);
     border:1px solid var(--line);
     border-radius:8px;
-    padding:12px 14px;
-    margin-bottom:8px;
-    font-size:12.5px;
+    padding:9px 12px 9px 34px;
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:13px;
   }
-  @media(max-width:700px){.pf-row{grid-template-columns:1fr 1fr; grid-template-rows:auto auto auto;}}
-  .pf-row .pf-name{font-weight:600;}
-  .pf-row .pf-pl{font-family:'JetBrains Mono',monospace; font-weight:700; text-align:right;}
-  .pf-row .pf-pl.pos{color:var(--green);}
-  .pf-row .pf-pl.neg{color:var(--red);}
-  .pf-del{background:none; border:none; color:var(--ink-faint); cursor:pointer; font-size:16px; padding:4px;}
-  .pf-del:hover{color:var(--red);}
-  .pf-empty{text-align:center; padding:40px 20px; color:var(--ink-faint); font-size:13px;}
+  .search-input:focus{ outline:none; border-color:var(--gold-dim); }
+  .search-input::placeholder{ color:var(--ink-faint); }
+  .sort-btn{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--ink-dim);
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:0 12px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .sort-btn:hover{ border-color:var(--gold-dim); color:var(--gold); }
+  .sort-btn.active{ border-color:var(--gold-dim); color:var(--gold); background:var(--surface-2); }
+  .search-empty{ text-align:center; padding:30px 20px; color:var(--ink-faint); font-size:12.5px; display:none; grid-column:1/-1; }
+
+  /* ---------- Tab icon SVGs ---------- */
+  .tab-btn svg{ width:13px; height:13px; flex-shrink:0; }
+  .tab-btn .dot{ display:none; }
+
+  /* ---------- Count-up ready ---------- */
+  .stat .num{ font-variant-numeric:tabular-nums; }
+
+  @media (prefers-reduced-motion: reduce){
+    .hero-card::after{ animation:none; }
+    .holo:hover{ transform:none; }
+  }
+
+  /* ================= SET VERDICTS ================= */
+  .verdict-rec{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;
+    font-weight:700;
+    letter-spacing:0.04em;
+    padding:4px 10px;
+    border-radius:20px;
+    white-space:nowrap;
+    text-transform:uppercase;
+  }
+  .verdict-rec.preorder{background:rgba(95,191,138,0.16); color:var(--green); border:1px solid rgba(95,191,138,0.4);}
+  .verdict-rec.wait{background:rgba(232,179,74,0.16); color:var(--gold); border:1px solid rgba(232,179,74,0.4);}
+  .verdict-rec.skip{background:rgba(226,104,95,0.16); color:var(--red); border:1px solid rgba(226,104,95,0.4);}
+  .verdict-rec.hold{background:rgba(95,191,138,0.16); color:var(--green); border:1px solid rgba(95,191,138,0.4);}
+  .verdict-rec.peaked{background:rgba(232,179,74,0.16); color:var(--gold); border:1px solid rgba(232,179,74,0.4);}
+  .verdict-rec.avoid{background:rgba(226,104,95,0.16); color:var(--red); border:1px solid rgba(226,104,95,0.4);}
+  .set-facts{
+    font-size:12px;
+    color:var(--ink-dim);
+    line-height:1.7;
+    margin:10px 0;
+    padding-left:2px;
+  }
+  .set-facts li{margin-bottom:3px;}
+  .claude-take{
+    background:linear-gradient(135deg, rgba(232,179,74,0.07), rgba(232,179,74,0.01));
+    border-left:2px solid var(--gold);
+    border-radius:0 8px 8px 0;
+    padding:12px 14px;
+    margin-top:10px;
+    font-size:12.5px;
+    color:var(--ink);
+    line-height:1.6;
+  }
+  .claude-take b{
+    display:block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;
+    letter-spacing:0.05em;
+    color:var(--gold);
+    margin-bottom:5px;
+  }
 </style>
 </head>
 <body>
@@ -847,45 +1014,55 @@
 </div>
 
 <header>
-  <div class="eyebrow">APEX Intel · ask Claude to refresh <span class="flag-chip">🇵🇭 MANILA EDITION</span></div>
+  <div class="eyebrow">APEX Intel · auto-updates daily <span class="flag-chip">🇵🇭 MANILA EDITION</span></div>
   <h1>TCG Market <span>Terminal</span></h1>
   <p class="sub">Prints, allocation, pre-orders, and the singles worth chasing across Pokémon TCG and One Piece Card Game — localized for Filipino collectors: PHP pricing, local shops, customs rules, and the import math.</p>
-  <div class="snapshot-line" id="snapshotLine">Manually refreshed 01 AUG 2026 · base reference 31 JUL 2026 · Manila, PH (GMT+8) · ref. rate US$1 ≈ ₱61.50 · ¥1 ≈ ₱0.383 · figures from TCGplayer, SNKRDUNK, PokeBeach, tcgTalk PH, Bandai/TPCi official channels</div>
+  <div class="snapshot-line" id="snapshotLine">Base reference 31 JUL 2026 · Manila, PH (GMT+8) · ref. rate US$1 ≈ ₱61.50 · ¥1 ≈ ₱0.383 · figures from TCGplayer, SNKRDUNK, PokeBeach, PokeGuardian, Bandai/TPCi official channels</div>
   <div class="live-row">
-    <span class="status-pill" id="statusPill"><span class="sdot"></span><span id="statusText">Static reference · 31 Jul 2026</span></span>
-    <button class="refresh-btn" id="refreshBtn" onclick="refreshFeed()">
-      <span class="spin">↻</span> Try live update
-    </button>
+    <span class="status-pill live"><span class="sdot"></span><span>Auto-updated daily · 8:00 AM PHT via GitHub Actions</span></span>
   </div>
-  <div class="section-note" style="display:block; margin-top:8px;">In-page live fetch depends on your browser/session allowing it — if it fails, just tell Claude in chat "refresh the dashboard" and it'll rebuild this file with the latest news in under a minute.</div>
+  <div class="section-note" style="display:block; margin-top:8px;">The news sections below are refreshed automatically every morning by a scheduled GitHub Action — no manual click needed. Everything else on this dashboard is a periodic content update; ask Claude in chat when you want those refreshed.</div>
 </header>
 
 <div class="tabs">
-  <button class="tab-btn active" data-tab="overview" onclick="showTab('overview')"><span class="dot"></span>Overview</button>
-  <button class="tab-btn" data-tab="pokemon" onclick="showTab('pokemon')"><span class="dot"></span>Pokémon TCG</button>
-  <button class="tab-btn" data-tab="onepiece" onclick="showTab('onepiece')"><span class="dot"></span>One Piece TCG</button>
-  <button class="tab-btn" data-tab="calendar" onclick="showTab('calendar')"><span class="dot"></span>📅 Calendar</button>
-  <button class="tab-btn" data-tab="analytics" onclick="showTab('analytics')"><span class="dot"></span>🧠 Analytics</button>
-  <button class="tab-btn" data-tab="phguide" onclick="showTab('phguide')"><span class="dot"></span>🇵🇭 PH Buying Guide</button>
-  <button class="tab-btn" data-tab="portfolio" onclick="showTab('portfolio')"><span class="dot"></span>💼 Portfolio</button>
+  <button class="tab-btn active" data-tab="overview" onclick="showTab('overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Overview</button>
+  <button class="tab-btn" data-tab="pokemon" onclick="showTab('pokemon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a9 9 0 0 1 0 18 9 9 0 0 1 0-18z"/><circle cx="12" cy="12" r="2.5"/></svg>Pokémon TCG</button>
+  <button class="tab-btn" data-tab="onepiece" onclick="showTab('onepiece')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 4 0 0 1 16 0"/><path d="M4 12a8 4 0 0 0 16 0"/><circle cx="12" cy="8.5" r="1.2" fill="currentColor" stroke="none"/></svg>One Piece TCG</button>
+  <button class="tab-btn" data-tab="calendar" onclick="showTab('calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Calendar</button>
+  <button class="tab-btn" data-tab="analytics" onclick="showTab('analytics')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V10M11 19V5M18 19v-7"/></svg>Analytics</button>
+  <button class="tab-btn" data-tab="verdicts" onclick="showTab('verdicts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Set Verdicts</button>
+  <button class="tab-btn" data-tab="phguide" onclick="showTab('phguide')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>PH Buying Guide</button>
 </div>
 
 <main>
 
   <div class="panel active" id="overview">
 
+    <div class="hero">
+      <div class="hero-stack">
+        <div class="hero-card c1"></div>
+        <div class="hero-card c2"></div>
+        <div class="hero-card c3"></div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">Manila Edition · live market intel</div>
+        <div class="hero-title">Know what to <span>chase</span>, what to <span>skip</span>, and what it actually costs to get it here.</div>
+        <div class="hero-sub">Pokémon TCG and One Piece TCG, tracked from global print runs down to Philippine peso landed cost — pre-orders, allocation, chase cards, and the local card shows worth the trip.</div>
+      </div>
+    </div>
+
     <div class="section">
       <div class="grid grid-3">
         <div class="card stat">
-          <div class="num">10B</div>
+          <div class="num" data-count="10" data-suffix="B">10B</div>
           <div class="lbl">Pokémon cards printed worldwide, Mar 2025–Mar 2026 — still short of demand</div>
         </div>
         <div class="card stat">
-          <div class="num blue">300%</div>
+          <div class="num blue" data-count="300" data-suffix="%">300%</div>
           <div class="lbl">Reported markup by some Manila/Cebu resellers on hot 2026 sets vs. US retail</div>
         </div>
         <div class="card stat">
-          <div class="num blue">₱10,000</div>
+          <div class="num blue" data-count="10000" data-prefix="₱">₱10,000</div>
           <div class="lbl">De minimis threshold — personal card shipments under this value clear PH customs duty-free</div>
         </div>
       </div>
@@ -917,7 +1094,7 @@
       </div>
       <div class="grid grid-3">
 
-        <a class="follow-card" href="https://x.com/Pokemon" target="_blank" rel="noopener">
+        <a class="follow-card holo" href="https://x.com/Pokemon" target="_blank" rel="noopener">
           <div class="follow-avatar">P</div>
           <div class="follow-body">
             <div class="follow-name">Pokémon</div>
@@ -927,7 +1104,7 @@
           <div class="follow-arrow">↗</div>
         </a>
 
-        <a class="follow-card" href="https://x.com/pokebeach" target="_blank" rel="noopener">
+        <a class="follow-card holo" href="https://x.com/pokebeach" target="_blank" rel="noopener">
           <div class="follow-avatar">PB</div>
           <div class="follow-body">
             <div class="follow-name">PokeBeach</div>
@@ -937,7 +1114,7 @@
           <div class="follow-arrow">↗</div>
         </a>
 
-        <a class="follow-card" href="https://x.com/PokeGuardian" target="_blank" rel="noopener">
+        <a class="follow-card holo" href="https://x.com/PokeGuardian" target="_blank" rel="noopener">
           <div class="follow-avatar">PG</div>
           <div class="follow-body">
             <div class="follow-name">PokeGuardian</div>
@@ -947,7 +1124,7 @@
           <div class="follow-arrow">↗</div>
         </a>
 
-        <a class="follow-card" href="https://x.com/snkrdunk" target="_blank" rel="noopener">
+        <a class="follow-card holo" href="https://x.com/snkrdunk" target="_blank" rel="noopener">
           <div class="follow-avatar">SD</div>
           <div class="follow-body">
             <div class="follow-name">SNKRDUNK</div>
@@ -957,7 +1134,7 @@
           <div class="follow-arrow">↗</div>
         </a>
 
-        <a class="follow-card" href="https://x.com/ONEPIECE_tcg_EN" target="_blank" rel="noopener">
+        <a class="follow-card holo" href="https://x.com/ONEPIECE_tcg_EN" target="_blank" rel="noopener">
           <div class="follow-avatar">OP</div>
           <div class="follow-body">
             <div class="follow-name">One Piece TCG (EN)</div>
@@ -967,7 +1144,7 @@
           <div class="follow-arrow">↗</div>
         </a>
 
-        <a class="follow-card" href="https://x.com/DataBlitzPH" target="_blank" rel="noopener">
+        <a class="follow-card holo" href="https://x.com/DataBlitzPH" target="_blank" rel="noopener">
           <div class="follow-avatar">DB</div>
           <div class="follow-body">
             <div class="follow-name">Datablitz PH</div>
@@ -988,34 +1165,11 @@
     <div class="section">
       <div class="section-head">
         <div class="section-title">Latest news <span class="tag">Pokémon TCG</span></div>
-        <div class="section-note" id="pokeUpdatedNote">auto-updated 01 Aug, 08:16 PM PHT</div>
+        <div class="section-note" id="pokeUpdatedNote">auto-updated daily · initializing on first Action run</div>
       </div>
 
       <div id="pokePulseWrap"></div>
-      <div class="card" id="pokemon-news-live" style="padding:4px 16px;"><div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>New 5th MEGA Pokemon Card Gym Promo Cards Revealed, Features Mega Tatsugiri ex 17 Jul 2…<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div>
-<div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>Pokémon TCG: Mini Portfolio (Q4 2026) Revealed 16 Jul 2026 16:52 A new version of the M…<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div>
-<div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>Pokemon TCG: Enhanced 2-Pack Blister (Gengar, Marshadow &amp; Team Rocket&#x27;s Mimikyu) Reveal…<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div>
-<div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>Mega Evolution - Pitch Black Full Digital Set List Revealed 10 Jul 2026 11:00 Mega Evol…<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div></div>
+      <div class="card" id="pokemon-news-live" style="padding:4px 16px; display:none;"></div>
       <div class="skeleton-wrap" id="pokeSkeleton" style="display:none;">
         <div class="card" style="padding:16px;">
           <div class="skeleton-line" style="width:30%;"></div>
@@ -1200,69 +1354,77 @@
         <div class="section-title">Chase cards to watch</div>
         <div class="section-note">USD/JPY market ref → PHP est. @₱61.50/$1</div>
       </div>
-      <div class="grid grid-3">
+      <div class="search-row">
+        <div class="search-input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" class="search-input" id="pokeCardSearch" placeholder="Search cards…" oninput="filterCards('pokeChaseGrid', 'pokeCardSearch', 'pokeSearchEmpty')">
+        </div>
+        <button class="sort-btn" onclick="sortCards('pokeChaseGrid', this)" data-sort="default">Sort: Default</button>
+      </div>
+      <div class="grid grid-3" id="pokeChaseGrid">
+      <div class="search-empty" id="pokeSearchEmpty">No cards match your search.</div>
 
-        <div class="chase-card">
+        <div class="chase-card holo">
           <div class="chase-top">
             <div><div class="chase-name">Gengar ex — SIR</div><div class="chase-set">Mega Evolution: Ascended Heroes</div></div>
             <div class="chase-price">~$1,275<small>≈ ₱78,413</small></div>
           </div>
           <div class="chase-move down">▼ off its $1,400 peak</div>
-          <p class="chase-why"><b>Updated:</b> this was climbing steadily into mid-2026, but TCGplayer's Jul 22 report shows it retracing from a ~$1,400 peak to $1,275 — the set's other big hits (Mega Dragonite ex: $900→$780) are following the same pattern. Still the set's clear #1 chase card, just cooling with the broader market rather than an isolated story.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,3 L16,6 L33,5 L50,12 L66,16 L83,19 L100,22 L100,24 L0,24 Z" fill="var(--red)" stroke="none"/><path d="M0,3 L16,6 L33,5 L50,12 L66,16 L83,19 L100,22" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="chase-why"><b>Updated:</b> this was climbing steadily into mid-2026, but TCGplayer's Jul 22 report shows it retracing from a ~$1,400 peak to $1,275 — the set's other big hits (Mega Dragonite ex: $900→$780) are following the same pattern. Still the set's clear #1 chase card, just cooling with the broader market rather than an isolated story.</p>
           <span class="rarity-pill rp-poke">Special Illustration Rare</span>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Gengar%20ex%20Mega%20Evolution%3A%20Ascended%20Heroes" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="chase-card">
+        <div class="chase-card holo">
           <div class="chase-top">
             <div><div class="chase-name">Terapagos ex — SIR</div><div class="chase-set">Scarlet &amp; Violet base</div></div>
             <div class="chase-price">$50–80<small>≈ ₱3,075–4,920</small></div>
           </div>
           <div class="chase-move down">▼ cooling after Apr spike to $80</div>
-          <p class="chase-why">Briefly spiked on a single explosive buying day; settling back above its pre-spike floor near $33 (≈₱2,030).</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,3 L16,6 L33,5 L50,12 L66,16 L83,19 L100,22 L100,24 L0,24 Z" fill="var(--red)" stroke="none"/><path d="M0,3 L16,6 L33,5 L50,12 L66,16 L83,19 L100,22" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="chase-why">Briefly spiked on a single explosive buying day; settling back above its pre-spike floor near $33 (≈₱2,030).</p>
           <span class="rarity-pill rp-poke">Special Illustration Rare</span>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Terapagos%20ex%20Scarlet%20%26%20Violet%20base" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="chase-card">
+        <div class="chase-card holo">
           <div class="chase-top">
             <div><div class="chase-name">Umbreon VMAX — Alt Art</div><div class="chase-set">Evolving Skies</div></div>
           </div>
           <div class="chase-move up">▲ steady long-term hold</div>
-          <p class="chase-why">Out of print, still the benchmark modern alt-art. Consistently named among the strongest holds in the modern SIR/alt-art category.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2 L100,24 L0,24 Z" fill="var(--green)" stroke="none"/><path d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="chase-why">Out of print, still the benchmark modern alt-art. Consistently named among the strongest holds in the modern SIR/alt-art category.</p>
           <span class="rarity-pill rp-poke">Alternate Art</span>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Umbreon%20VMAX%20Evolving%20Skies" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="chase-card">
+        <div class="chase-card holo">
           <div class="chase-top">
             <div><div class="chase-name">Shiny Rare Pikachu</div><div class="chase-set">Paldean Fates</div></div>
             <div class="chase-price">~$34→2x+<small>≈ ₱2,091→₱4,182+</small></div>
           </div>
           <div class="chase-move up">▲ more than doubled since Feb</div>
-          <p class="chase-why">Now rotated out of Standard — collectors betting it never gets reprinted. Most of the climb happened in April 2026.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2 L100,24 L0,24 Z" fill="var(--green)" stroke="none"/><path d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="chase-why">Now rotated out of Standard — collectors betting it never gets reprinted. Most of the climb happened in April 2026.</p>
           <span class="rarity-pill rp-poke">Shiny Rare</span>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Shiny%20Rare%20Pikachu%20Paldean%20Fates" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="chase-card">
+        <div class="chase-card holo">
           <div class="chase-top">
             <div><div class="chase-name">Mega Charizard X ex — SAR</div><div class="chase-set">JP · Mega Evolution era</div></div>
             <div class="chase-price">¥70,000<small>≈ ₱26,810</small></div>
           </div>
           <div class="chase-move up">▲ from ¥55,000 in Jan</div>
-          <p class="chase-why">JP high-rarity chase cards holding firm even as mid-tier RR/SR cards correct 15–25% off launch-week peaks. Sourcing this locally usually means a forwarding service.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2 L100,24 L0,24 Z" fill="var(--green)" stroke="none"/><path d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="chase-why">JP high-rarity chase cards holding firm even as mid-tier RR/SR cards correct 15–25% off launch-week peaks. Sourcing this locally usually means a forwarding service.</p>
           <span class="rarity-pill rp-poke">Special Art Rare (JP)</span>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Mega%20Charizard%20X%20ex%20Phantasmal%20Flames" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="chase-card">
+        <div class="chase-card holo">
           <div class="chase-top">
             <div><div class="chase-name">Pikachu ex — SAR</div><div class="chase-set">JP · Mega Dream ex</div></div>
             <div class="chase-price">¥58,000<small>≈ ₱22,214</small></div>
           </div>
           <div class="chase-move up">▲ holding near highs</div>
-          <p class="chase-why">Among the most-traded JP products per SNKRDUNK's Jan 2026 report; liquidity for top-rarity singles remains strong despite the broader correction.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2 L100,24 L0,24 Z" fill="var(--green)" stroke="none"/><path d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="chase-why">Among the most-traded JP products per SNKRDUNK's Jan 2026 report; liquidity for top-rarity singles remains strong despite the broader correction.</p>
           <span class="rarity-pill rp-poke">Special Art Rare (JP)</span>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Pikachu%20ex%20Mega%20Dream%20ex" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
@@ -1305,34 +1467,11 @@
     <div class="section">
       <div class="section-head">
         <div class="section-title">Latest news <span class="tag">One Piece TCG</span></div>
-        <div class="section-note" id="opUpdatedNote">auto-updated 01 Aug, 08:16 PM PHT</div>
+        <div class="section-note" id="opUpdatedNote">auto-updated daily · initializing on first Action run</div>
       </div>
 
       <div id="opPulseWrap"></div>
-      <div class="card" id="onepiece-news-live" style="padding:4px 16px;"><div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>Premium Card Collection -Live Action Edition vol.2 Baroque Works- has been announced.<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div>
-<div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>Premium Card Collection -Live Action Edition vol.2 Straw Hat Crew- has been announced.<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div>
-<div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>C2E2 2026 has been updated.<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div>
-<div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>Banned/Restricted Card Addition Notice has been updated.<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div></div>
+      <div class="card" id="onepiece-news-live" style="padding:4px 16px; display:none;"></div>
       <div class="skeleton-wrap" id="opSkeleton" style="display:none;">
         <div class="card" style="padding:16px;">
           <div class="skeleton-line" style="width:30%;"></div>
@@ -1490,68 +1629,76 @@
         <div class="section-title">Chase cards to watch</div>
         <div class="section-note">USD/JPY market ref → PHP est. @₱61.50/$1</div>
       </div>
-      <div class="grid grid-3">
+      <div class="search-row">
+        <div class="search-input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" class="search-input" id="opCardSearch" placeholder="Search cards…" oninput="filterCards('opChaseGrid', 'opCardSearch', 'opSearchEmpty')">
+        </div>
+        <button class="sort-btn" onclick="sortCards('opChaseGrid', this)" data-sort="default">Sort: Default</button>
+      </div>
+      <div class="grid grid-3" id="opChaseGrid">
+      <div class="search-empty" id="opSearchEmpty">No cards match your search.</div>
 
-        <div class="chase-card">
+        <div class="chase-card holo">
           <div class="chase-top">
             <div><div class="chase-name">Monkey.D.Luffy — Manga Rare</div><div class="chase-set">Awakening of the New Era (OP-05)</div></div>
             <div class="chase-price">$1,400–2,500<small>≈ ₱86,100–153,750</small></div>
           </div>
           <div class="chase-move up">▲ most expensive widely-traded OP single</div>
-          <p class="chase-why">Corrected from an earlier version of this dashboard, which had this card wrong as an OP-01 card in the $280–350 range — the real Manga Rare Luffy is OP05-119, and trades several multiples higher. Not competitively relevant — pure collector demand, stabilizing around $2,500 per TCGplayer's May 2025 tracking and ~$1,400 per PriceCharting's Q1 2026 raw NM data.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2 L100,24 L0,24 Z" fill="var(--green)" stroke="none"/><path d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="chase-why">Corrected from an earlier version of this dashboard, which had this card wrong as an OP-01 card in the $280–350 range — the real Manga Rare Luffy is OP05-119, and trades several multiples higher. Not competitively relevant — pure collector demand, stabilizing around $2,500 per TCGplayer's May 2025 tracking and ~$1,400 per PriceCharting's Q1 2026 raw NM data.</p>
           <span class="rarity-pill rp-op">Manga Rare</span>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Monkey%20D%20Luffy%20119%20-%20Awakening%20of%20the%20New%20Era" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="chase-card">
+        <div class="chase-card holo">
           <div class="chase-top">
             <div><div class="chase-name">Sakazuki (Akainu) — Manga Rare</div><div class="chase-set">The Time of Battle (OP-16)</div></div>
             <div class="chase-price">¥350,000–500,000<small>≈ ₱134,050–191,500</small></div>
           </div>
           <div class="chase-move up">▲ set's "holy grail" chase</div>
-          <p class="chase-why">Corrected upward from an earlier, much lower estimate on this dashboard. Community pricing guides call this the set's holy grail, reaching toward ¥500,000 at the high end — split three ways with fellow Admirals Aokiji and Kizaru as the set's first-ever triple Manga Rare lineup, but Akainu's Fleet Admiral status keeps demand cleanest.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2 L100,24 L0,24 Z" fill="var(--green)" stroke="none"/><path d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="chase-why">Corrected upward from an earlier, much lower estimate on this dashboard. Community pricing guides call this the set's holy grail, reaching toward ¥500,000 at the high end — split three ways with fellow Admirals Aokiji and Kizaru as the set's first-ever triple Manga Rare lineup, but Akainu's Fleet Admiral status keeps demand cleanest.</p>
           <span class="rarity-pill rp-op">Manga Rare</span>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Sakazuki%20Akainu%20065%20-%20The%20Time%20of%20Battle" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="chase-card">
+        <div class="chase-card holo">
           <div class="chase-top">
             <div><div class="chase-name">Edward.Newgate — SR</div><div class="chase-set">Paramount War (OP-02)</div></div>
             <div class="chase-price">$15–30<small>≈ ₱923–1,845</small></div>
           </div>
           <div class="chase-move down">▼ corrected — not a Manga Rare</div>
-          <p class="chase-why">Correction: an earlier version of this dashboard listed a "Manga Rare Whitebeard" at $90–120 — that card doesn't actually exist. OP-02 predates the Manga Rare rarity entirely. This SR (OP02-004) is Whitebeard's most notable OP-02 printing, and it's a genuinely modest-value card — a sentimental hold for the character, not a serious investment piece.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,3 L16,6 L33,5 L50,12 L66,16 L83,19 L100,22 L100,24 L0,24 Z" fill="var(--red)" stroke="none"/><path d="M0,3 L16,6 L33,5 L50,12 L66,16 L83,19 L100,22" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="chase-why">Correction: an earlier version of this dashboard listed a "Manga Rare Whitebeard" at $90–120 — that card doesn't actually exist. OP-02 predates the Manga Rare rarity entirely. This SR (OP02-004) is Whitebeard's most notable OP-02 printing, and it's a genuinely modest-value card — a sentimental hold for the character, not a serious investment piece.</p>
           <span class="rarity-pill rp-op">Super Rare (SR)</span>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Edward%20Newgate%20Whitebeard%20004%20-%20Paramount%20War" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="chase-card">
+        <div class="chase-card holo">
           <div class="chase-top">
             <div><div class="chase-name">Shanks — Manga Rare</div><div class="chase-set">The World's Strongest Warriors (OP-17)</div></div>
             <div class="chase-price">¥200,000+<small>≈ ₱76,600+ (est.)</small></div>
           </div>
           <div class="chase-move up">▲ pre-market buzz already building</div>
-          <p class="chase-why">His third Manga Rare treatment — prior SEC-SP and SR-SP Shanks cards both hold well over ¥200,000, so expectations are aggressive out of the gate. Card number not yet assigned since OP-17 hasn't released — this is a pre-release estimate, not a confirmed printing.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2 L100,24 L0,24 Z" fill="var(--green)" stroke="none"/><path d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="chase-why">His third Manga Rare treatment — prior SEC-SP and SR-SP Shanks cards both hold well over ¥200,000, so expectations are aggressive out of the gate. Card number not yet assigned since OP-17 hasn't released — this is a pre-release estimate, not a confirmed printing.</p>
           <span class="rarity-pill rp-op">Manga Rare · pre-release</span>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Shanks%20-%20The%20World%27s%20Strongest%20Warriors" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="chase-card">
+        <div class="chase-card holo">
           <div class="chase-top">
             <div><div class="chase-name">Sakazuki — Super Alt-Art</div><div class="chase-set">The Time of Battle (OP-16)</div></div>
           </div>
           <div class="chase-move up">▲ most emotionally-charged Admiral pull</div>
-          <p class="chase-why">The more attainable alt-art version of Sakazuki, sitting below the full Manga Rare in price. Part of a three-Admiral alt-art chase group with Kizaru (OP16-073) and Aokiji (OP16-063) — collectors may hunt all three as a set.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2 L100,24 L0,24 Z" fill="var(--green)" stroke="none"/><path d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="chase-why">The more attainable alt-art version of Sakazuki, sitting below the full Manga Rare in price. Part of a three-Admiral alt-art chase group with Kizaru (OP16-073) and Aokiji (OP16-063) — collectors may hunt all three as a set.</p>
           <span class="rarity-pill rp-op">Super Parallel</span>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Sakazuki%20Akainu%20065%20-%20The%20Time%20of%20Battle" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="chase-card">
+        <div class="chase-card holo">
           <div class="chase-top">
             <div><div class="chase-name">Portgas.D.Ace — Manga Rare</div><div class="chase-set">multiple printings</div></div>
           </div>
           <div class="chase-move up">▲ cleanest collector demand in recent sets</div>
-          <p class="chase-why">Value doesn't depend on meta relevance — treated as one of the safer long-term singles across whichever set features him. Exact set/number varies by printing (Ace has appeared as Manga Rare in more than one release) — check the specific listing before buying rather than assuming a single reference price.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2 L100,24 L0,24 Z" fill="var(--green)" stroke="none"/><path d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="chase-why">Value doesn't depend on meta relevance — treated as one of the safer long-term singles across whichever set features him. Exact set/number varies by printing (Ace has appeared as Manga Rare in more than one release) — check the specific listing before buying rather than assuming a single reference price.</p>
           <span class="rarity-pill rp-op">Manga Rare</span>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Portgas%20D%20Ace%20-%20One%20Piece" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
@@ -1572,7 +1719,96 @@
         Every confirmed date for Pokémon TCG and One Piece TCG in one place, soonest first. <b>Countdowns are live</b> — they recalculate from today's date whenever you open this page, no refresh needed.
       </div>
       <div class="timeline" id="unifiedTimeline"></div>
-      <div class="section-note" style="margin-top:6px; display:block;">Dates sourced from official TPCi/Bandai announcements as of this dashboard's last content update — always double-check against Datablitz/Game One listings before ordering, especially OP-17's exact EN date (confirmed range: Aug 26–28).</div>
+      <div class="section-note" style="margin-top:6px; display:block;">Dates sourced from official TPCi/Bandai announcements as of this dashboard's last content update — always double-check against Datablitz/Game One listings before ordering.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">🇵🇭 PH card expos &amp; shows <span class="tag ph">mini to major</span></div>
+        <div class="section-note">sourced from Reddit, TikTok, Facebook &amp; organizer pages</div>
+      </div>
+
+      <div class="insight" style="margin-bottom:16px;">
+        Unlike set release dates, expo schedules genuinely move around week to week and I can't reliably pin exact upcoming dates months out. What's below is honest about that: confirmed recurring series and their organizers, with direct links to check the current schedule, rather than dates I can't verify.
+      </div>
+
+      <div class="term-label">🏟️ Major expos <span class="term-tag">multi-day, 40–65+ vendor booths</span></div>
+      <div class="grid grid-2">
+
+        <a class="verdict-card holo" href="https://www.facebook.com/cardcartelphilippines/" target="_blank" rel="noopener" style="text-decoration:none; color:inherit; display:block;">
+          <div class="verdict-top">
+            <div><div class="verdict-name">Card Expo Philippines</div><div class="verdict-set">Organized by Card Cartel PH</div></div>
+            <div class="verdict-badge accumulate">Recurring</div>
+          </div>
+          <p class="verdict-fact">The most frequent major show in Metro Manila — rotates across Ayala Malls locations (Feliz, Manila Bay, Circuit) roughly monthly. 40–65+ vendor tables, all major TCGs. Card Cartel's Facebook page is the single best source for the next confirmed date.</p>
+          <div class="verdict-source">↗ facebook.com/cardcartelphilippines</div>
+        </a>
+
+        <a class="verdict-card holo" href="https://geekpop.helixpay.ph/" target="_blank" rel="noopener" style="text-decoration:none; color:inherit; display:block;">
+          <div class="verdict-top">
+            <div><div class="verdict-name">PICCS &amp; RESBAK</div><div class="verdict-set">Organized by Geek+Pop</div></div>
+            <div class="verdict-badge watch">Periodic</div>
+          </div>
+          <p class="verdict-fact">Philippine International Collectibles and Card Show, paired with a fighting-game tournament (RESBAK). Broader scope than most — MTG, Pokémon, One Piece, Lorcana, Vanguard, Flesh & Blood all in one hall, plus auctions, box breaks, and pack wars. Last held May 2026 at SPACE, One Ayala, Makati.</p>
+          <div class="verdict-source">↗ geekpop.helixpay.ph</div>
+        </a>
+
+        <a class="verdict-card holo" href="https://www.tiktok.com/discover/pokemon-cards-show-philippines" target="_blank" rel="noopener" style="text-decoration:none; color:inherit; display:block;">
+          <div class="verdict-top">
+            <div><div class="verdict-name">Trainers Unite Card Show</div><div class="verdict-set">Recurring at SM Megamall</div></div>
+            <div class="verdict-badge watch">Recurring</div>
+          </div>
+          <p class="verdict-fact">Pokémon-focused show, well documented on TikTok by attendees — a good gauge of real foot traffic and vendor variety before you commit to going. Search "#trainersunite" for the most recent walkthrough videos and crowd size.</p>
+          <div class="verdict-source">↗ TikTok #trainersunite #cardexpo</div>
+        </a>
+
+        <a class="verdict-card holo" href="https://pinoygamehaven.com/category/events/" target="_blank" rel="noopener" style="text-decoration:none; color:inherit; display:block;">
+          <div class="verdict-top">
+            <div><div class="verdict-name">All aBOARD Expo</div><div class="verdict-set">Gaming Library × Quezon City Government</div></div>
+            <div class="verdict-badge watch">Annual</div>
+          </div>
+          <p class="verdict-fact">Southeast Asia's largest tabletop gaming convention by their own claim — broader than pure TCG (board games, minis, RPGs too) but always has a significant card-game vendor presence. 2026 edition ran May 28–31 at Quezon City M.I.C.E. Center.</p>
+          <div class="verdict-source">↗ pinoygamehaven.com/category/events</div>
+        </a>
+
+      </div>
+
+      <div class="term-label" style="margin-top:24px;">🎴 Mini / weekly events <span class="term-tag">local shop leagues &amp; GYM Store events</span></div>
+      <div class="insight" style="margin-bottom:14px;">
+        These are small, recurring, official Pokémon "GYM Store" league events — sourced directly from Pokémon's own official Asia event locator, so dates and venues are as reliable as it gets. New sessions get added weekly; check the live locator rather than relying on this snapshot.
+      </div>
+      <div class="card" style="padding:4px 16px;">
+        <div class="news-item">
+          <div class="news-date">RECURRING</div>
+          <div class="news-body">
+            <h4>SideQuest: Cafe + Hobby Lounge</h4>
+            <p>3/F East Wing, Estancia, Capitol Commons, Pasig City — weekly GYM Store events.</p>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-date">RECURRING</div>
+          <div class="news-body">
+            <h4>Japstore PH Cards &amp; Hobbies</h4>
+            <p>363 Moriones St., Tondo, Manila — weekly GYM Store events.</p>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-date">RECURRING</div>
+          <div class="news-body">
+            <h4>ForgeHobbyPlace SouthSide</h4>
+            <p>Mana Town Center, Kawit, Cavite — weekly GYM Store events.</p>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-date">RECURRING</div>
+          <div class="news-body">
+            <h4>IBAM &amp; Traders Superstore</h4>
+            <p>Iloilo City and Dipolog City respectively — proof the scene isn't Metro Manila–only. Same weekly GYM Store format.</p>
+          </div>
+        </div>
+      </div>
+      <a class="view-link" href="https://asia.pokemon-card.com/ph/event-search/list/" target="_blank" rel="noopener" style="margin-top:10px;">🔍 Check the live official PH event locator ↗</a>
+
     </div>
 
   </div>
@@ -1613,7 +1849,7 @@
 
       <div class="grid grid-2">
 
-        <div class="verdict-card">
+        <div class="verdict-card holo">
           <div class="verdict-top">
             <div><div class="verdict-name">Totodile</div><div class="verdict-set">First Partner Series Collection</div></div>
             <div class="verdict-badge accumulate">Accumulate</div>
@@ -1622,12 +1858,12 @@
             <div class="verdict-price">~$25–30<small>down from ~$50–60</small></div>
             <div class="verdict-trend" style="color:var(--red);">▼ cut in half<br>in ~30 days</div>
           </div>
-          <p class="verdict-fact">Sharpest correction in the whole First Partner Series lineup — TCGplayer's own report frames it as <b>supply catching up to demand</b>, not a fundamental drop in interest. Cheapest entry point among the four starters, but it's also explicitly the "least popular," so confirm you like the card, not just the discount.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,3 L16,6 L33,5 L50,12 L66,16 L83,19 L100,22 L100,24 L0,24 Z" fill="var(--red)" stroke="none"/><path d="M0,3 L16,6 L33,5 L50,12 L66,16 L83,19 L100,22" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="verdict-fact">Sharpest correction in the whole First Partner Series lineup — TCGplayer's own report frames it as <b>supply catching up to demand</b>, not a fundamental drop in interest. Cheapest entry point among the four starters, but it's also explicitly the "least popular," so confirm you like the card, not just the discount.</p>
           <div class="verdict-source">Source: TCGplayer Price Trends — Dropping, 29 Jul 2026</div>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Totodile%20First%20Partner%20Series%20Collection" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="verdict-card">
+        <div class="verdict-card holo">
           <div class="verdict-top">
             <div><div class="verdict-name">Squirtle / Charmander / Bulbasaur</div><div class="verdict-set">First Partner Series Collection</div></div>
             <div class="verdict-badge accumulate">Accumulate</div>
@@ -1636,12 +1872,12 @@
             <div class="verdict-price">$30–40<small>down from $40–50 peak</small></div>
             <div class="verdict-trend" style="color:var(--red);">▼ off recent<br>highs</div>
           </div>
-          <p class="verdict-fact">The three most popular starters in the set, all pulling back together as more copies hit the market. Group buy: nostalgia + 30th-anniversary tie-in demand is a structural tailwind that a supply-driven dip doesn't erase — this reads as a re-entry zone, not a broken thesis.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,3 L16,6 L33,5 L50,12 L66,16 L83,19 L100,22 L100,24 L0,24 Z" fill="var(--red)" stroke="none"/><path d="M0,3 L16,6 L33,5 L50,12 L66,16 L83,19 L100,22" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="verdict-fact">The three most popular starters in the set, all pulling back together as more copies hit the market. Group buy: nostalgia + 30th-anniversary tie-in demand is a structural tailwind that a supply-driven dip doesn't erase — this reads as a re-entry zone, not a broken thesis.</p>
           <div class="verdict-source">Source: TCGplayer Price Trends — Dropping, 29 Jul 2026</div>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Squirtle%20First%20Partner%20Series%20Collection" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="verdict-card">
+        <div class="verdict-card holo">
           <div class="verdict-top">
             <div><div class="verdict-name">SIR Terapagos ex</div><div class="verdict-set">Scarlet &amp; Violet base set</div></div>
             <div class="verdict-badge watch">Watch</div>
@@ -1650,12 +1886,12 @@
             <div class="verdict-price">~$40–50<small>range since the spike</small></div>
             <div class="verdict-trend" style="color:var(--gold);">▼ from $80 peak<br>▲ from $33 floor</div>
           </div>
-          <p class="verdict-fact">TCGplayer's own analysts called the trajectory directly: <b>"likely to settle somewhere below that high, but above its pre-spike price of $33."</b> A single explosive buying day (avg. 28 copies/buyer) drove the spike — that's speculative, not organic, so the settle-point is the more honest fair value.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,12 L16,9 L33,14 L50,8 L66,13 L83,10 L100,11 L100,24 L0,24 Z" fill="var(--ink-faint)" stroke="none"/><path d="M0,12 L16,9 L33,14 L50,8 L66,13 L83,10 L100,11" fill="none" stroke="var(--ink-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="verdict-fact">TCGplayer's own analysts called the trajectory directly: <b>"likely to settle somewhere below that high, but above its pre-spike price of $33."</b> A single explosive buying day (avg. 28 copies/buyer) drove the spike — that's speculative, not organic, so the settle-point is the more honest fair value.</p>
           <div class="verdict-source">Source: TCGplayer Price Trends — Climbing, 27 May 2026</div>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=SIR%20Terapagos%20ex%20Scarlet%20%26%20Violet%20base%20set" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="verdict-card">
+        <div class="verdict-card holo">
           <div class="verdict-top">
             <div><div class="verdict-name">Jellicent ex — SIR</div><div class="verdict-set">White Flare</div></div>
             <div class="verdict-badge watch">Watch</div>
@@ -1664,12 +1900,12 @@
             <div class="verdict-price">~$25<small>as of report date</small></div>
             <div class="verdict-trend" style="color:var(--red);">▼ steady decline<br>since release</div>
           </div>
-          <p class="verdict-fact">Lagging its own set-mates — SIRs like Zoroark and Chandelure, and the starter SIRs, all trade higher. Same pull-rate tier as its higher siblings, so the gap is a pricing inefficiency more than a quality signal — the kind of thing that tends to close as the set matures, though it can also just mean the market has it right.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,3 L16,6 L33,5 L50,12 L66,16 L83,19 L100,22 L100,24 L0,24 Z" fill="var(--red)" stroke="none"/><path d="M0,3 L16,6 L33,5 L50,12 L66,16 L83,19 L100,22" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="verdict-fact">Lagging its own set-mates — SIRs like Zoroark and Chandelure, and the starter SIRs, all trade higher. Same pull-rate tier as its higher siblings, so the gap is a pricing inefficiency more than a quality signal — the kind of thing that tends to close as the set matures, though it can also just mean the market has it right.</p>
           <div class="verdict-source">Source: TCGplayer Price Trends — Dropping, 18 Feb 2026 (older data point — verify current price before acting)</div>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Jellicent%20ex%20White%20Flare" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="verdict-card">
+        <div class="verdict-card holo">
           <div class="verdict-top">
             <div><div class="verdict-name">Zacian — "Staff" Promo</div><div class="verdict-set">Phantasmal Flames prerelease</div></div>
             <div class="verdict-badge watch">Watch</div>
@@ -1678,7 +1914,7 @@
             <div class="verdict-price">$25–35<small>vs $50+ April peak</small></div>
             <div class="verdict-trend" style="color:var(--gold);">▼ off peak<br>▲ off Dec floor</div>
           </div>
-          <p class="verdict-fact">The least popular of the four prerelease "Staff" promos, meaning it's structurally the cheapest way into that promo set. Well above where it started (~$20 in December) but well off its April high — sitting in the middle of its own range rather than at an extreme in either direction.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,12 L16,9 L33,14 L50,8 L66,13 L83,10 L100,11 L100,24 L0,24 Z" fill="var(--ink-faint)" stroke="none"/><path d="M0,12 L16,9 L33,14 L50,8 L66,13 L83,10 L100,11" fill="none" stroke="var(--ink-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="verdict-fact">The least popular of the four prerelease "Staff" promos, meaning it's structurally the cheapest way into that promo set. Well above where it started (~$20 in December) but well off its April high — sitting in the middle of its own range rather than at an extreme in either direction.</p>
           <div class="verdict-source">Source: TCGplayer Price Trends — Dropping, 29 Jul 2026</div>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Zacian%20Phantasmal%20Flames%20prerelease" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
@@ -1689,7 +1925,7 @@
 
       <div class="grid grid-2">
 
-        <div class="verdict-card">
+        <div class="verdict-card holo">
           <div class="verdict-top">
             <div><div class="verdict-name">Umbreon VMAX — Alt Art</div><div class="verdict-set">Evolving Skies</div></div>
             <div class="verdict-badge hold">Hold / Keep</div>
@@ -1698,12 +1934,12 @@
             <div class="verdict-price">Blue-chip<small>no fresh trend data</small></div>
             <div class="verdict-trend" style="color:var(--ink-dim);">— stable<br>long-term</div>
           </div>
-          <p class="verdict-fact">Permanently out of print — the supply side of this equation can only shrink from here. Consistently cited across collector communities as the benchmark modern alt-art. This is a "buy it because it can't be printed again," not a "buy it because it's cheap right now" pick.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,12 L16,9 L33,14 L50,8 L66,13 L83,10 L100,11 L100,24 L0,24 Z" fill="var(--ink-faint)" stroke="none"/><path d="M0,12 L16,9 L33,14 L50,8 L66,13 L83,10 L100,11" fill="none" stroke="var(--ink-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="verdict-fact">Permanently out of print — the supply side of this equation can only shrink from here. Consistently cited across collector communities as the benchmark modern alt-art. This is a "buy it because it can't be printed again," not a "buy it because it's cheap right now" pick.</p>
           <div class="verdict-source">Source: community consensus, cross-referenced multiple outlets</div>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Umbreon%20VMAX%20Evolving%20Skies" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="verdict-card">
+        <div class="verdict-card holo">
           <div class="verdict-top">
             <div><div class="verdict-name">Edward.Newgate — SR</div><div class="verdict-set">Paramount War (OP-02)</div></div>
             <div class="verdict-badge watch">Sentimental only</div>
@@ -1712,12 +1948,12 @@
             <div class="verdict-price">$15–30<small>corrected — was $90–120</small></div>
             <div class="verdict-trend" style="color:var(--red);">▼ not actually<br>a Manga Rare</div>
           </div>
-          <p class="verdict-fact"><b>Correction:</b> this dashboard previously listed a "Manga Rare Whitebeard" here — that card doesn't exist. OP-02 predates the Manga Rare rarity. OP02-004 is Whitebeard's real notable OP-02 printing (Super Rare), and it trades for a modest $15–30. Downgraded out of the "worth keeping as an investment" tier — this is a character-loyalty hold, not a scarcity play.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,3 L16,6 L33,5 L50,12 L66,16 L83,19 L100,22 L100,24 L0,24 Z" fill="var(--red)" stroke="none"/><path d="M0,3 L16,6 L33,5 L50,12 L66,16 L83,19 L100,22" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="verdict-fact"><b>Correction:</b> this dashboard previously listed a "Manga Rare Whitebeard" here — that card doesn't exist. OP-02 predates the Manga Rare rarity. OP02-004 is Whitebeard's real notable OP-02 printing (Super Rare), and it trades for a modest $15–30. Downgraded out of the "worth keeping as an investment" tier — this is a character-loyalty hold, not a scarcity play.</p>
           <div class="verdict-source">Source: eBay/TCGplayer sold listings, OP02-004</div>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Edward%20Newgate%20Whitebeard%20004%20-%20Paramount%20War" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="verdict-card">
+        <div class="verdict-card holo">
           <div class="verdict-top">
             <div><div class="verdict-name">Monkey.D.Luffy — Manga Rare</div><div class="verdict-set">Awakening of the New Era (OP-05)</div></div>
             <div class="verdict-badge hold">Hold / Keep</div>
@@ -1726,12 +1962,12 @@
             <div class="verdict-price">$1,400–2,500<small>corrected — was $280–350</small></div>
             <div class="verdict-trend" style="color:var(--green);">▲ longest track<br>record in the TCG</div>
           </div>
-          <p class="verdict-fact"><b>Correction:</b> this dashboard had the wrong set (OP-01) and a price several multiples too low for this card. The real Manga Rare Luffy is OP05-119 — stabilizing around $2,500 per TCGplayer's May 2025 tracking, ~$1,400 per PriceCharting's Q1 2026 raw NM data. Still the closest thing One Piece TCG has to a "safe" long-term single — the multi-year hold pattern is real, the number was just wrong.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2 L100,24 L0,24 Z" fill="var(--green)" stroke="none"/><path d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="verdict-fact"><b>Correction:</b> this dashboard had the wrong set (OP-01) and a price several multiples too low for this card. The real Manga Rare Luffy is OP05-119 — stabilizing around $2,500 per TCGplayer's May 2025 tracking, ~$1,400 per PriceCharting's Q1 2026 raw NM data. Still the closest thing One Piece TCG has to a "safe" long-term single — the multi-year hold pattern is real, the number was just wrong.</p>
           <div class="verdict-source">Source: TCGplayer content article (May 2025), PriceCharting (Q1 2026)</div>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Monkey%20D%20Luffy%20119%20-%20Awakening%20of%20the%20New%20Era" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="verdict-card">
+        <div class="verdict-card holo">
           <div class="verdict-top">
             <div><div class="verdict-name">Sakazuki (Akainu) — Manga Rare</div><div class="verdict-set">The Time of Battle (OP-16)</div></div>
             <div class="verdict-badge watch">Watch → Hold</div>
@@ -1740,12 +1976,12 @@
             <div class="verdict-price">¥350,000–500,000<small>corrected — was $130–180</small></div>
             <div class="verdict-trend" style="color:var(--gold);">▲ set's<br>"holy grail"</div>
           </div>
-          <p class="verdict-fact"><b>Correction:</b> the original $130–180 figure on this dashboard was wrong by roughly two orders of magnitude — collector guides call this OP-16's "holy grail," pushing toward ¥500,000 at the high end. Too early to call it a proven long-term hold the way Luffy is (only out since June), but it's following the same franchise-tier pattern.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,12 L16,9 L33,14 L50,8 L66,13 L83,10 L100,11 L100,24 L0,24 Z" fill="var(--ink-faint)" stroke="none"/><path d="M0,12 L16,9 L33,14 L50,8 L66,13 L83,10 L100,11" fill="none" stroke="var(--ink-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="verdict-fact"><b>Correction:</b> the original $130–180 figure on this dashboard was wrong by roughly two orders of magnitude — collector guides call this OP-16's "holy grail," pushing toward ¥500,000 at the high end. Too early to call it a proven long-term hold the way Luffy is (only out since June), but it's following the same franchise-tier pattern.</p>
           <div class="verdict-source">Source: shonentcg.com OP-16 Admiral Manga Rare Guide, Jun 2026</div>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Sakazuki%20Akainu%20065%20-%20The%20Time%20of%20Battle" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
 
-        <div class="verdict-card">
+        <div class="verdict-card holo">
           <div class="verdict-top">
             <div><div class="verdict-name">Mega Charizard X ex</div><div class="verdict-set">Phantasmal Flames #125/094</div></div>
             <div class="verdict-badge hold">Case Study</div>
@@ -1754,7 +1990,7 @@
             <div class="verdict-price">$400 → $641.87<small>Dec low → Feb rebound</small></div>
             <div class="verdict-trend" style="color:var(--green);">▲ +$146<br>in 30 days</div>
           </div>
-          <p class="verdict-fact">This is the receipts for the whole "buy low" thesis, not a current live pick — it already played out. Hit an all-time low of ~$400 on Dec 24, then rebounded +$146 (≈30%) in the following month as the set's box prices recovered. Included here as proof the pattern is real, with the honest caveat that most dips don't rebound this cleanly or this fast.</p>
+          <svg class="spark" viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><path class="fill" d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2 L100,24 L0,24 Z" fill="var(--green)" stroke="none"/><path d="M0,21 L16,18 L33,19 L50,12 L66,9 L83,6 L100,2" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><p class="verdict-fact">This is the receipts for the whole "buy low" thesis, not a current live pick — it already played out. Hit an all-time low of ~$400 on Dec 24, then rebounded +$146 (≈30%) in the following month as the set's box prices recovered. Included here as proof the pattern is real, with the honest caveat that most dips don't rebound this cleanly or this fast.</p>
           <div class="verdict-source">Source: TCGplayer Price Trends — Climbing, 03 Feb 2026</div>
           <a class="view-link" href="https://www.tcgplayer.com/search/all/product?q=Mega%20Charizard%20X%20ex%20Phantasmal%20Flames%20%23125" target="_blank" rel="noopener">🔍 View card photo ↗</a>
         </div>
@@ -1853,6 +2089,190 @@
 
   </div>
 
+  <div class="panel" id="verdicts">
+
+    <div class="section" style="margin-top:12px;">
+      <div class="section-head">
+        <div class="section-title">Set Verdicts <span class="tag">Claude's analysis, not just data</span></div>
+        <div class="section-note">every take grounded in facts cited elsewhere in this dashboard</div>
+      </div>
+
+      <div class="insight" style="margin-bottom:14px;">
+        Everywhere else in this dashboard, I've tried to stay close to the data and let you draw conclusions. This tab is different on purpose — it's my actual read on each set, upcoming and completed, with a recommendation. That means it's more opinionated and more likely to be wrong than the reference tables elsewhere. Treat it as one informed perspective, not a signal to act on blindly.
+      </div>
+      <div class="insight" style="margin-bottom:20px; border-color:var(--red); background:linear-gradient(135deg, rgba(226,104,95,0.08), rgba(226,104,95,0.02));">
+        <b style="color:var(--red);">Not financial advice.</b> Same disclaimer as the Analytics tab, worth repeating here specifically: these are opinions formed from public market data, not guarantees. Position size accordingly.
+      </div>
+
+      <div class="term-label">🔜 Upcoming sets <span class="term-tag">pre-release read — buy, wait, or skip</span></div>
+      <div class="grid grid-2">
+
+        <div class="verdict-card holo">
+          <div class="verdict-top">
+            <div><div class="verdict-name">OP-17 — The World's Strongest Warriors</div><div class="verdict-set">One Piece · EN Aug 28, 2026</div></div>
+            <div class="verdict-rec preorder">Pre-order</div>
+          </div>
+          <ul class="set-facts">
+            <li>4th anniversary set — Loki confirmed as SEC, new "Gold Anniversary SP" tier (Luffy/Shanks/Blackbeard/Buggy)</li>
+            <li>Tightest JP→EN gap yet (6 days) — less import-arbitrage risk than any prior set</li>
+            <li>Manga Rare Shanks pre-market buzz building; his prior SEC-SP/SR-SP treatments both hold well over ¥200,000</li>
+          </ul>
+          <div class="claude-take">
+            <b>CLAUDE'S TAKE</b>
+            This is the strongest "buy at launch" case on this whole list. Our own ROI data shows One Piece anniversary-adjacent sets (OP-01 Wave 1: +5,575%) outperform everything else we've tracked — and the shrunk JP-EN gap specifically de-risks the import-timing problem that hurt collectors on earlier sets. If you're only pre-ordering one thing this quarter, this is the one I'd pick.
+          </div>
+        </div>
+
+        <div class="verdict-card holo">
+          <div class="verdict-top">
+            <div><div class="verdict-name">Pokémon TCG: 30th Celebration</div><div class="verdict-set">Pokémon · Sep 16, 2026</div></div>
+            <div class="verdict-rec preorder">Pre-order</div>
+          </div>
+          <ul class="set-facts">
+            <li>All-foil set, new Futuristic Rare rarity, 30 stamped classic reprints</li>
+            <li>First globally-synced release this size — PH gets EN stock same-day as US</li>
+            <li>Lands right after TCGplayer confirmed the market's first real 2026 cooling (Jul 22–29 reports)</li>
+          </ul>
+          <div class="claude-take">
+            <b>CLAUDE'S TAKE</b>
+            Anniversary sets have a real track record here — Generations for the 20th became a genuine collector's item, not just a hype cycle. Landing during a market cooldown is actually good timing: less scalper competition at MSRP on launch day than a set dropping mid-hype-cycle would see. My read: pre-order the ETB/UPC at MSRP, don't chase marked-up sealed after the fact.
+          </div>
+        </div>
+
+        <div class="verdict-card holo">
+          <div class="verdict-top">
+            <div><div class="verdict-name">Mega Evolution — Ascended Heroes Tin</div><div class="verdict-set">Pokémon · Aug 28, 2026 · $21.99</div></div>
+            <div class="verdict-rec wait">Skip the tin</div>
+          </div>
+          <ul class="set-facts">
+            <li>Ties into Ascended Heroes, whose headline Gengar ex SIR is already retracing ($1,400 → $1,275, per TCGplayer Jul 22)</li>
+            <li>Tin format = one pack + accessories, not a meaningful sealed-value vehicle</li>
+          </ul>
+          <div class="claude-take">
+            <b>CLAUDE'S TAKE</b>
+            The value driver here was always the Gengar ex chase card, not this specific SKU — and that card is cooling right now, not climbing. Skip the tin unless you specifically want the promo inside it. If you want exposure to this set, buy the single directly once it finds a floor, not a $22 box hoping for a pull.
+          </div>
+        </div>
+
+        <div class="verdict-card holo">
+          <div class="verdict-top">
+            <div><div class="verdict-name">Mega Evolution — Delta Reign</div><div class="verdict-set">Pokémon · Nov 6, 2026</div></div>
+            <div class="verdict-rec wait">Too early</div>
+          </div>
+          <ul class="set-facts">
+            <li>EN release of Storm Emeralda (JP), headlined by Mega Rayquaza ex</li>
+            <li>Rayquaza has a strong precedent — the Evolving Skies Rayquaza VMAX alt art remains one of the most valuable modern cards</li>
+            <li>3+ months out; no EN secondary-market data exists yet</li>
+          </ul>
+          <div class="claude-take">
+            <b>CLAUDE'S TAKE</b>
+            The Rayquaza precedent is genuinely promising, but I don't have enough current data to call this one with any confidence — that's an honest limit, not a hedge. Revisit this card once Storm Emeralda's JP secondary market settles (usually 2-3 weeks post-launch); that'll tell us far more than guessing now.
+          </div>
+        </div>
+
+        <div class="verdict-card holo">
+          <div class="verdict-top">
+            <div><div class="verdict-name">Mega Lucario Z</div><div class="verdict-set">Pokémon JP · Nov 27, 2026</div></div>
+            <div class="verdict-rec wait">Not enough data</div>
+          </div>
+          <ul class="set-facts">
+            <li>JP-exclusive, no chase card revealed yet</li>
+            <li>PH access requires Rakuten lottery + forwarding — real friction on top of the price</li>
+          </ul>
+          <div class="claude-take">
+            <b>CLAUDE'S TAKE</b>
+            There's genuinely nothing to analyze yet — no reveals, no chase card, no pricing signal. I'd rather say that plainly than manufacture a take. Check back once PokeGuardian or SNKRDUNK post early SAR reveals, typically 4-6 weeks before release.
+          </div>
+        </div>
+
+      </div>
+
+      <div class="term-label" style="margin-top:26px;">✅ Completed / live sets <span class="term-tag">post-mortem — was the hype justified?</span></div>
+      <div class="grid grid-2">
+
+        <div class="verdict-card holo">
+          <div class="verdict-top">
+            <div><div class="verdict-name">Sakazuki (Akainu) Manga Rare</div><div class="verdict-set">One Piece OP-16 · live since Jun 12</div></div>
+            <div class="verdict-rec hold">Thesis proven</div>
+          </div>
+          <ul class="set-facts">
+            <li>Confirmed ¥350,000–500,000 — collector guides call it the set's "holy grail"</li>
+            <li>Part of the first-ever triple-Admiral Manga Rare lineup (Akainu/Aokiji/Kizaru)</li>
+          </ul>
+          <div class="claude-take">
+            <b>CLAUDE'S TAKE</b>
+            This one already played out faster than almost anything else we've tracked — a 7-week-old set with a genuinely blue-chip chase card. If you pulled or bought early, that thesis is proven; this isn't a "buy now" recommendation at the now-established premium, it's a "you were right if you already own it" one.
+          </div>
+        </div>
+
+        <div class="verdict-card holo">
+          <div class="verdict-top">
+            <div><div class="verdict-name">Mega Evolution — Pitch Black</div><div class="verdict-set">Pokémon · live since Jul 17</div></div>
+            <div class="verdict-rec peaked">Mixed — not the obvious pick</div>
+          </div>
+          <ul class="set-facts">
+            <li>SIR Mega Darkrai ex (the "headline" card) slid $310 → $290 (TCGplayer Jul 28)</li>
+            <li>Slowbro prerelease promo climbed $18–20 → ~$40 in the same window</li>
+            <li>Morpeko ex 117 climbed to ~$130 post-release, a set "surprise winner"</li>
+          </ul>
+          <div class="claude-take">
+            <b>CLAUDE'S TAKE</b>
+            The card everyone assumed would be the chase (Darkrai) is actually cooling, while a prerelease promo nobody was talking about at launch is the real performer. This is a useful lesson on its own: the "obvious" headline SIR isn't automatically the best hold. If you're still deciding what to keep from this set, Slowbro and Morpeko look more interesting than Darkrai right now.
+          </div>
+        </div>
+
+        <div class="verdict-card holo">
+          <div class="verdict-top">
+            <div><div class="verdict-name">Storm Emeralda</div><div class="verdict-set">Pokémon JP · live since Jul 31</div></div>
+            <div class="verdict-rec wait">Wait for it to settle</div>
+          </div>
+          <ul class="set-facts">
+            <li>Mega Rayquaza ex headline — set is only days old as of this dashboard's last update</li>
+            <li>No secondary-market pricing data gathered yet — genuinely too fresh</li>
+          </ul>
+          <div class="claude-take">
+            <b>CLAUDE'S TAKE</b>
+            First-week JP pricing on a hyped set is almost always inflated by launch-day scarcity before it finds a real level — I've watched this pattern play out on nearly every set in this dashboard. Whatever the asking price is right now, I'd wait 2-3 weeks for it to settle before paying it.
+          </div>
+        </div>
+
+        <div class="verdict-card holo">
+          <div class="verdict-top">
+            <div><div class="verdict-name">Evolving Skies</div><div class="verdict-set">Pokémon · 2021, reference case</div></div>
+            <div class="verdict-rec hold">Proof of concept, not a current buy</div>
+          </div>
+          <ul class="set-facts">
+            <li>Booster box: $149.99 launch MSRP → ~$2,635 today (+1,383%)</li>
+            <li>Umbreon VMAX Alt Art: ~70% PSA Gem-10 rate on ~28,000 total graded — genuinely well-printed, not condition-sensitive</li>
+          </ul>
+          <div class="claude-take">
+            <b>CLAUDE'S TAKE</b>
+            This is the clearest "buy sealed at launch, hold" proof-of-concept anywhere in modern Pokémon. But it's exactly that — proof it happened once, not a signal to buy in now. At $2,635/box, new money faces a completely different risk profile than 2021 buyers did. I'd treat this as the reference case that justifies the strategy in general, not as a current opportunity.
+          </div>
+        </div>
+
+        <div class="verdict-card holo">
+          <div class="verdict-top">
+            <div><div class="verdict-name">Romance Dawn (OP-01)</div><div class="verdict-set">One Piece · 2022, reference case</div></div>
+            <div class="verdict-rec hold">Know your print run</div>
+          </div>
+          <ul class="set-facts">
+            <li>Wave 1 (blue packaging): $99.99 → ~$5,675 (+5,575%)</li>
+            <li>Wave 2 (white packaging): same $99.99 MSRP → ~$1,790 (+1,690%) — same set, ~3.2x price gap</li>
+          </ul>
+          <div class="claude-take">
+            <b>CLAUDE'S TAKE</b>
+            The single clearest lesson in this entire dashboard: "which set" matters less than "which print run." If someone's selling you "OP-01 sealed" today without specifying Wave 1 vs Wave 2, you're not comparing apples to apples — confirm which one you're actually paying for before treating either price as the fair comp.
+          </div>
+        </div>
+
+      </div>
+
+      <div class="section-note" style="margin-top:16px; display:block;">This tab reflects the facts known as of this dashboard's last content update — it doesn't auto-refresh the way the news sections do. Ask Claude to revisit a verdict anytime new data changes the picture.</div>
+    </div>
+
+  </div>
+
   <div class="panel" id="phguide">
 
     <div class="section">
@@ -1861,7 +2281,7 @@
       </div>
       <div class="grid grid-2">
 
-        <div class="shop-card">
+        <div class="shop-card holo">
           <div class="shop-top">
             <div><div class="shop-name">Datablitz</div><div class="shop-loc">Multiple SM branches nationwide + e-commerce</div></div>
           </div>
@@ -1869,7 +2289,7 @@
           <div class="shop-tags"><span class="shop-tag">Sealed</span><span class="shop-tag">MSRP pricing</span><span class="shop-tag">Flagship events</span></div>
         </div>
 
-        <div class="shop-card">
+        <div class="shop-card holo">
           <div class="shop-top">
             <div><div class="shop-name">Game One PH</div><div class="shop-loc">gameone.ph + physical branches</div></div>
           </div>
@@ -1877,7 +2297,7 @@
           <div class="shop-tags"><span class="shop-tag">Sealed</span><span class="shop-tag">Pre-orders</span><span class="shop-tag">Flagship events</span></div>
         </div>
 
-        <div class="shop-card">
+        <div class="shop-card holo">
           <div class="shop-top">
             <div><div class="shop-name">Toy Kingdom (SM branches)</div><div class="shop-loc">SM Megamall, SM Makati, SM Cebu, SM Davao, Greenhills</div></div>
           </div>
@@ -1885,7 +2305,7 @@
           <div class="shop-tags"><span class="shop-tag">Backup option</span><span class="shop-tag">Current sets only</span></div>
         </div>
 
-        <div class="shop-card">
+        <div class="shop-card holo">
           <div class="shop-top">
             <div><div class="shop-name">Green Gate Hobbies</div><div class="shop-loc">857 Aurora Blvd cor. St. Mary St, Cubao, QC · Tue–Sun</div></div>
           </div>
@@ -1893,7 +2313,7 @@
           <div class="shop-tags"><span class="shop-tag">JP imports</span><span class="shop-tag">Singles</span><span class="shop-tag">Gym events</span></div>
         </div>
 
-        <div class="shop-card">
+        <div class="shop-card holo">
           <div class="shop-top">
             <div><div class="shop-name">Neutral Grounds</div><div class="shop-loc">neutralgrounds.online + physical branches</div></div>
           </div>
@@ -1901,7 +2321,7 @@
           <div class="shop-tags"><span class="shop-tag">Singles</span><span class="shop-tag">LGS experience</span><span class="shop-tag">Competitive events</span></div>
         </div>
 
-        <div class="shop-card">
+        <div class="shop-card holo">
           <div class="shop-top">
             <div><div class="shop-name">Facebook groups &amp; Shopee</div><div class="shop-loc">Community-run</div></div>
           </div>
@@ -1986,7 +2406,7 @@
         <div class="section-note">I can't reliably report live Shopee/Carousell peso prices — they move too fast to state as fact. Tap through instead.</div>
       </div>
       <div class="grid grid-3">
-        <a class="follow-card" href="https://shopee.ph/search?keyword=pokemon%20tcg%20booster%20box" target="_blank" rel="noopener">
+        <a class="follow-card holo" href="https://shopee.ph/search?keyword=pokemon%20tcg%20booster%20box" target="_blank" rel="noopener">
           <div class="follow-avatar">SP</div>
           <div class="follow-body">
             <div class="follow-name">Shopee PH</div>
@@ -1994,7 +2414,7 @@
           </div>
           <div class="follow-arrow">↗</div>
         </a>
-        <a class="follow-card" href="https://www.carousell.ph/search/pokemon%20tcg?sort_by=3" target="_blank" rel="noopener">
+        <a class="follow-card holo" href="https://www.carousell.ph/search/pokemon%20tcg?sort_by=3" target="_blank" rel="noopener">
           <div class="follow-avatar">CR</div>
           <div class="follow-body">
             <div class="follow-name">Carousell PH</div>
@@ -2002,7 +2422,7 @@
           </div>
           <div class="follow-arrow">↗</div>
         </a>
-        <a class="follow-card" href="https://www.lazada.com.ph/tag/pokemon-tcg/" target="_blank" rel="noopener">
+        <a class="follow-card holo" href="https://www.lazada.com.ph/tag/pokemon-tcg/" target="_blank" rel="noopener">
           <div class="follow-avatar">LZ</div>
           <div class="follow-body">
             <div class="follow-name">Lazada PH</div>
@@ -2011,42 +2431,6 @@
           <div class="follow-arrow">↗</div>
         </a>
       </div>
-    </div>
-
-  </div>
-
-  <div class="panel" id="portfolio">
-
-    <div class="section" style="margin-top:12px;">
-      <div class="section-head">
-        <div class="section-title">My Portfolio <span class="tag">saved in this browser</span></div>
-        <div class="section-note" id="pfStatus">loading…</div>
-      </div>
-
-      <div class="insight" style="margin-bottom:16px;">
-        Log what you actually paid, and this tracks your live paper P/L against the current price you enter. Data is saved privately to your browser via Claude's artifact storage — it's not sent anywhere, not shared, and won't sync to another device. Clear your browser data and it's gone, so don't treat this as your only record.
-      </div>
-
-      <div class="pf-summary" id="pfSummary"></div>
-
-      <div class="pf-add-card">
-        <label class="calc-label">ADD A HOLDING</label>
-        <div class="pf-grid" style="margin-top:8px;">
-          <div>
-            <input type="text" id="pfName" class="calc-input" placeholder="Card or product name">
-          </div>
-          <div>
-            <input type="number" id="pfBuyPrice" class="calc-input" placeholder="Buy price (₱)">
-          </div>
-          <div>
-            <input type="number" id="pfCurPrice" class="calc-input" placeholder="Current value (₱)">
-          </div>
-          <button class="pf-btn" onclick="addHolding()">+ Add</button>
-        </div>
-      </div>
-
-      <div id="pfList"></div>
-
     </div>
 
   </div>
@@ -2158,199 +2542,9 @@
   }
   renderTimeline();
 
-  /* ================= LIVE REFRESH ================= */
-
-  let lastUpdated = null;
-  let refreshing = false;
-
   function escapeHtml(str){
     return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
   }
-
-  function setStatus(mode, extra){
-    const pill = document.getElementById('statusPill');
-    const text = document.getElementById('statusText');
-    pill.className = 'status-pill' + (mode ? ' ' + mode : '');
-    const btn = document.getElementById('refreshBtn');
-    if(mode === 'loading'){
-      text.textContent = 'Pulling latest news…';
-      btn.disabled = true;
-      btn.classList.add('spinning');
-    } else if(mode === 'live'){
-      text.textContent = extra || 'Live · just updated';
-      btn.disabled = false;
-      btn.classList.remove('spinning');
-    } else if(mode === 'error'){
-      text.textContent = extra || 'Refresh failed — showing archive, try again';
-      btn.disabled = false;
-      btn.classList.remove('spinning');
-    } else {
-      text.textContent = extra || 'Not yet refreshed — click live update';
-      btn.disabled = false;
-      btn.classList.remove('spinning');
-    }
-  }
-
-  function timeAgo(date){
-    const mins = Math.round((Date.now() - date.getTime()) / 60000);
-    if(mins < 1) return 'just now';
-    if(mins === 1) return '1 min ago';
-    if(mins < 60) return mins + ' min ago';
-    const hrs = Math.round(mins/60);
-    return hrs + (hrs===1 ? ' hr ago' : ' hrs ago');
-  }
-
-  function tickTimestamp(){
-    if(!lastUpdated) return;
-    setStatus('live', 'Live · updated ' + timeAgo(lastUpdated));
-  }
-  setInterval(tickTimestamp, 30000);
-
-  async function callClaudeJSON(promptText){
-    let response;
-    try{
-      response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1500,
-          messages: [{ role: "user", content: promptText }],
-          tools: [{ type: "web_search_20250305", name: "web_search" }]
-        })
-      });
-    }catch(networkErr){
-      throw new Error("Network/CORS: " + networkErr.message);
-    }
-
-    const raw = await response.text();
-
-    if(!response.ok){
-      let detail = raw.slice(0, 200);
-      try{ const errJson = JSON.parse(raw); detail = (errJson.error && errJson.error.message) || detail; }catch(_){}
-      throw new Error("API " + response.status + ": " + detail);
-    }
-
-    let data;
-    try{ data = JSON.parse(raw); }
-    catch(_){ throw new Error("Bad response envelope from API"); }
-
-    if(data.stop_reason === "max_tokens"){
-      // response got cut off — the JSON we parse below may still fail
-      console.warn("Response hit max_tokens and may be truncated");
-    }
-
-    const textBlocks = (data.content || [])
-      .filter(b => b.type === "text")
-      .map(b => b.text)
-      .join("\n");
-
-    if(!textBlocks.trim()) throw new Error("Empty response (stop_reason: " + (data.stop_reason || "unknown") + ")");
-
-    const cleaned = textBlocks.replace(/```json/gi, "").replace(/```/g, "").trim();
-
-    // Try a direct parse first (handles the common well-behaved case)
-    try{ return JSON.parse(cleaned); }catch(_){}
-
-    // Fall back to extracting the largest {...} block
-    const match = cleaned.match(/\{[\s\S]*\}/);
-    if(!match) throw new Error("No JSON found in: " + cleaned.slice(0,120));
-    try{
-      return JSON.parse(match[0]);
-    }catch(parseErr){
-      throw new Error("JSON parse failed: " + parseErr.message);
-    }
-  }
-
-  function pokemonPrompt(){
-    return `Use web search to find the most current Pokémon TCG news (aim for the last 1-3 weeks, freshest first): new set announcements or reveals, print run / supply / allocation news, scalping or purchase-restriction policy changes, and notable pre-order or release-date updates. Respond with ONLY a raw JSON object — no markdown fences, no commentary before or after — exactly matching this shape:
-{"news":[{"date":"e.g. 12 AUG","title":"short headline, under 12 words","body":"one sentence summary, under 26 words"}],"pulse":"one sentence, under 28 words, on the current overall state of the Pokémon TCG market"}
-Include exactly 4 news items, most recent first, each about a distinct story. Output nothing but that JSON object.`;
-  }
-
-  function onePiecePrompt(){
-    return `Use web search to find the most current One Piece Card Game (Bandai TCG) news (aim for the last 1-3 weeks, freshest first): set releases or reveals, leader/card reveals, new rarities or mechanics, print/supply news, and pre-order or release-date updates. Respond with ONLY a raw JSON object — no markdown fences, no commentary before or after — exactly matching this shape:
-{"news":[{"date":"e.g. 12 AUG","title":"short headline, under 12 words","body":"one sentence summary, under 26 words"}],"pulse":"one sentence, under 28 words, on the current overall state of the One Piece TCG market"}
-Include exactly 4 news items, most recent first, each about a distinct story. Output nothing but that JSON object.`;
-  }
-
-  function renderLiveNews(containerId, items){
-    const el = document.getElementById(containerId);
-    if(!items || !items.length){ el.style.display = 'none'; return; }
-    el.innerHTML = items.map(it => `
-      <div class="news-item">
-        <div class="news-date">${escapeHtml(it.date || '')}</div>
-        <div class="news-body">
-          <h4>${escapeHtml(it.title || '')}<span class="live-badge">LIVE</span></h4>
-          <p>${escapeHtml(it.body || '')}</p>
-        </div>
-      </div>
-    `).join('');
-    el.style.display = 'block';
-  }
-
-  function renderPulse(wrapId, label, text){
-    const el = document.getElementById(wrapId);
-    if(!text){ el.innerHTML = ''; return; }
-    el.innerHTML = `<div class="pulse-line"><b>${label}</b>${escapeHtml(text)}</div>`;
-  }
-
-  async function refreshFeed(){
-    if(refreshing) return;
-    refreshing = true;
-    setStatus('loading');
-    document.getElementById('pokeSkeleton').style.display = 'block';
-    document.getElementById('opSkeleton').style.display = 'block';
-
-    const [pokeResult, opResult] = await Promise.allSettled([
-      callClaudeJSON(pokemonPrompt()),
-      callClaudeJSON(onePiecePrompt())
-    ]);
-
-    const stamp = new Date().toLocaleString('en-PH', { hour:'2-digit', minute:'2-digit', day:'2-digit', month:'short', timeZone:'Asia/Manila' });
-    const errors = [];
-
-    if(pokeResult.status === 'fulfilled'){
-      renderLiveNews('pokemon-news-live', pokeResult.value.news);
-      renderPulse('pokePulseWrap', 'LIVE MARKET PULSE', pokeResult.value.pulse);
-      document.getElementById('pokeUpdatedNote').textContent = 'live · updated ' + stamp + ' PH time';
-    } else {
-      console.error('Pokémon feed failed:', pokeResult.reason);
-      document.getElementById('pokeUpdatedNote').textContent = 'live update failed — showing archive';
-      errors.push('Pokémon: ' + pokeResult.reason.message);
-    }
-
-    if(opResult.status === 'fulfilled'){
-      renderLiveNews('onepiece-news-live', opResult.value.news);
-      renderPulse('opPulseWrap', 'LIVE MARKET PULSE', opResult.value.pulse);
-      document.getElementById('opUpdatedNote').textContent = 'live · updated ' + stamp + ' PH time';
-    } else {
-      console.error('One Piece feed failed:', opResult.reason);
-      document.getElementById('opUpdatedNote').textContent = 'live update failed — showing archive';
-      errors.push('One Piece: ' + opResult.reason.message);
-    }
-
-    document.getElementById('pokeSkeleton').style.display = 'none';
-    document.getElementById('opSkeleton').style.display = 'none';
-    refreshing = false;
-
-    if(errors.length === 0){
-      lastUpdated = new Date();
-      document.getElementById('snapshotLine').textContent =
-        'Live feed last updated ' + stamp + ' PH time · base reference 31 JUL 2026 · ref. rate US$1 ≈ ₱61.50 · ¥1 ≈ ₱0.383';
-      setStatus('live');
-    } else if(errors.length === 1){
-      lastUpdated = new Date();
-      setStatus('live', 'Partial update ' + stamp + ' — ' + errors[0]);
-    } else {
-      setStatus('error', 'Live fetch blocked in this session — ask Claude in chat to refresh instead. (' + errors.join(' · ') + ')');
-    }
-  }
-
-  // Manual only: this environment's sandbox may block outbound fetch to the
-  // Anthropic API, so we don't auto-retry on load or on an interval — that
-  // would just silently fail over and over. Use the button, and if it errors,
-  // ask Claude in chat to rebuild this file instead.
 
   /* ================= LANDED COST CALCULATOR ================= */
 
@@ -2395,99 +2589,97 @@ Include exactly 4 news items, most recent first, each about a distinct story. Ou
       : `✓ Item value is under the ₱${CUSTOMS_THRESHOLD_PHP.toLocaleString()} de minimis threshold — should clear duty-free, though this isn't a guarantee.`;
   }
 
-  /* ================= PORTFOLIO TRACKER ================= */
-
-  const PF_KEY = 'apex-tcg-portfolio';
-  let pfHoldings = [];
-
-  async function loadPortfolio(){
-    const statusEl = document.getElementById('pfStatus');
-    try{
-      const result = await window.storage.get(PF_KEY, false);
-      pfHoldings = result && result.value ? JSON.parse(result.value) : [];
-      statusEl.textContent = 'saved in this browser';
-    }catch(e){
-      // key not found yet is expected on first run
-      pfHoldings = [];
-      statusEl.textContent = 'saved in this browser';
-    }
-    renderPortfolio();
-  }
-
-  async function savePortfolio(){
-    try{
-      await window.storage.set(PF_KEY, JSON.stringify(pfHoldings), false);
-    }catch(e){
-      console.error('Portfolio save failed:', e);
-      document.getElementById('pfStatus').textContent = 'save failed — check connection';
-    }
-  }
-
-  function addHolding(){
-    const name = document.getElementById('pfName').value.trim();
-    const buy = parseFloat(document.getElementById('pfBuyPrice').value);
-    const cur = parseFloat(document.getElementById('pfCurPrice').value);
-
-    if(!name || isNaN(buy) || isNaN(cur)){
-      alert('Fill in a name, buy price, and current value first.');
-      return;
-    }
-
-    pfHoldings.push({ id: Date.now(), name, buy, cur });
-    document.getElementById('pfName').value = '';
-    document.getElementById('pfBuyPrice').value = '';
-    document.getElementById('pfCurPrice').value = '';
-
-    savePortfolio();
-    renderPortfolio();
-  }
-
-  function deleteHolding(id){
-    pfHoldings = pfHoldings.filter(h => h.id !== id);
-    savePortfolio();
-    renderPortfolio();
-  }
-
-  function renderPortfolio(){
-    const fmt = n => '₱' + n.toLocaleString('en-PH', {maximumFractionDigits: 0});
-
-    const totalBuy = pfHoldings.reduce((s,h) => s + h.buy, 0);
-    const totalCur = pfHoldings.reduce((s,h) => s + h.cur, 0);
-    const totalPl = totalCur - totalBuy;
-    const totalPlPct = totalBuy > 0 ? (totalPl / totalBuy * 100) : 0;
-
-    document.getElementById('pfSummary').innerHTML = `
-      <div class="pf-stat"><div class="num">${fmt(totalBuy)}</div><div class="lbl">Total invested</div></div>
-      <div class="pf-stat"><div class="num">${fmt(totalCur)}</div><div class="lbl">Current value</div></div>
-      <div class="pf-stat"><div class="num" style="color:${totalPl >= 0 ? 'var(--green)' : 'var(--red)'}">${totalPl >= 0 ? '+' : ''}${fmt(totalPl)}</div><div class="lbl">Unrealized P/L (${totalPl >= 0 ? '+' : ''}${totalPlPct.toFixed(1)}%)</div></div>
-    `;
-
-    const listEl = document.getElementById('pfList');
-    if(pfHoldings.length === 0){
-      listEl.innerHTML = '<div class="pf-empty">No holdings logged yet — add your first card or sealed product above.</div>';
-      return;
-    }
-
-    listEl.innerHTML = pfHoldings.map(h => {
-      const pl = h.cur - h.buy;
-      const plPct = h.buy > 0 ? (pl / h.buy * 100) : 0;
-      const cls = pl >= 0 ? 'pos' : 'neg';
-      return `
-        <div class="pf-row">
-          <div class="pf-name">${escapeHtml(h.name)}</div>
-          <div>Buy: ${fmt(h.buy)}</div>
-          <div>Now: ${fmt(h.cur)}</div>
-          <div class="pf-pl ${cls}">${pl >= 0 ? '+' : ''}${fmt(pl)} (${pl >= 0 ? '+' : ''}${plPct.toFixed(1)}%)</div>
-          <button class="pf-del" onclick="deleteHolding(${h.id})" title="Remove">✕</button>
-        </div>
-      `;
-    }).join('');
-  }
-
   window.addEventListener('load', () => {
     runLandedCalc();
-    loadPortfolio();
+    initHoloEffect();
+    initCountUp();
   });
+
+  /* ================= V2: HOLO, SEARCH, SORT, COUNT-UP ================= */
+
+  function initHoloEffect(){
+    document.addEventListener('mousemove', (e) => {
+      const card = e.target.closest('.holo');
+      if(!card) return;
+      const rect = card.getBoundingClientRect();
+      const mx = ((e.clientX - rect.left) / rect.width) * 100;
+      const my = ((e.clientY - rect.top) / rect.height) * 100;
+      card.style.setProperty('--mx', mx + '%');
+      card.style.setProperty('--my', my + '%');
+    }, { passive: true });
+  }
+
+  function filterCards(gridId, inputId, emptyId){
+    const q = document.getElementById(inputId).value.trim().toLowerCase();
+    const grid = document.getElementById(gridId);
+    const cards = grid.querySelectorAll('.chase-card');
+    let visibleCount = 0;
+    cards.forEach(card => {
+      const text = card.textContent.toLowerCase();
+      const match = !q || text.includes(q);
+      card.style.display = match ? '' : 'none';
+      if(match) visibleCount++;
+    });
+    document.getElementById(emptyId).style.display = visibleCount === 0 ? 'block' : 'none';
+  }
+
+  function sortCards(gridId, btn){
+    const grid = document.getElementById(gridId);
+    const cards = Array.from(grid.querySelectorAll('.chase-card'));
+    const empty = grid.querySelector('.search-empty');
+    const current = btn.dataset.sort;
+    const next = current === 'default' ? 'priceDesc' : (current === 'priceDesc' ? 'priceAsc' : 'default');
+    btn.dataset.sort = next;
+    btn.textContent = next === 'default' ? 'Sort: Default' : (next === 'priceDesc' ? 'Sort: Price ↓' : 'Sort: Price ↑');
+
+    const parsePrice = (card) => {
+      const priceEl = card.querySelector('.chase-price');
+      if(!priceEl) return -1;
+      const txt = priceEl.childNodes[0] ? priceEl.childNodes[0].textContent : priceEl.textContent;
+      const nums = txt.replace(/[^\d.]/g, ' ').trim().split(/\s+/).map(parseFloat).filter(n => !isNaN(n));
+      if(!nums.length) return -1;
+      return Math.max(...nums);
+    };
+
+    if(next === 'default'){
+      cards.forEach(c => grid.insertBefore(c, empty));
+      // restore original order via data-original-index
+      const ordered = cards.slice().sort((a,b) => (+a.dataset.origIdx||0) - (+b.dataset.origIdx||0));
+      ordered.forEach(c => grid.insertBefore(c, empty));
+      return;
+    }
+
+    cards.forEach((c,i) => { if(!c.dataset.origIdx) c.dataset.origIdx = i; });
+    cards.sort((a,b) => next === 'priceDesc' ? parsePrice(b)-parsePrice(a) : parsePrice(a)-parsePrice(b));
+    cards.forEach(c => grid.insertBefore(c, empty));
+  }
+
+  function initCountUp(){
+    const nums = document.querySelectorAll('.stat .num[data-count]');
+    if(!nums.length) return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(!entry.isIntersecting) return;
+        const el = entry.target;
+        observer.unobserve(el);
+        const target = parseFloat(el.dataset.count);
+        const prefix = el.dataset.prefix || '';
+        const suffix = el.dataset.suffix || '';
+        const duration = 900;
+        const start = performance.now();
+        function tick(now){
+          const p = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          const val = Math.round(target * eased);
+          el.textContent = prefix + val.toLocaleString('en-PH') + suffix;
+          if(p < 1) requestAnimationFrame(tick);
+          else el.textContent = prefix + target.toLocaleString('en-PH') + suffix;
+        }
+        requestAnimationFrame(tick);
+      });
+    }, { threshold: 0.4 });
+    nums.forEach(el => observer.observe(el));
+  }
 </script>
 
 </body>
