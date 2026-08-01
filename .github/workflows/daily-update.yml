@@ -1,0 +1,37 @@
+name: Daily TCG News Update
+
+on:
+  schedule:
+    # 00:00 UTC = 8:00 AM Philippine Time (UTC+8)
+    - cron: '0 0 * * *'
+  workflow_dispatch: {}   # lets you trigger it manually from the Actions tab too
+
+permissions:
+  contents: write
+
+jobs:
+  update-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run news scraper
+        run: python update_news.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "apex-tcg-bot"
+          git config user.email "actions@github.com"
+          git add index.html
+          git diff --staged --quiet && echo "No changes to commit" && exit 0
+          git commit -m "Auto-update: daily news refresh $(date -u +'%Y-%m-%d')"
+          git push
