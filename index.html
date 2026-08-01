@@ -1091,7 +1091,47 @@
   .flip-buyrate .rates{display:flex; gap:14px; flex-wrap:wrap;}
   .flip-buyrate .rate-item{font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--ink);}
   .flip-buyrate .rate-item small{display:block; color:var(--ink-faint); font-size:8.5px; font-weight:400; margin-top:1px;}
-  .flip-why{font-size:12px; color:var(--ink-dim); line-height:1.55;}
+
+  /* ================= FULL POLISH PASS ================= */
+
+  /* Back to top */
+  .back-to-top{
+    position:fixed;
+    bottom:20px; right:20px;
+    width:44px; height:44px;
+    border-radius:50%;
+    background:var(--surface-2);
+    border:1px solid var(--gold-dim);
+    color:var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    z-index:60;
+    opacity:0; pointer-events:none;
+    transform:translateY(10px);
+    transition:opacity .25s ease, transform .25s ease;
+    box-shadow:0 4px 16px rgba(0,0,0,0.4);
+  }
+  .back-to-top.visible{ opacity:1; pointer-events:auto; transform:translateY(0); }
+  .back-to-top svg{ width:18px; height:18px; }
+  .back-to-top:active{ transform:scale(0.92); }
+
+  /* Scroll-reveal */
+  .reveal{ opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease; }
+  .reveal.in-view{ opacity:1; transform:translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1; transform:none; transition:none; }
+  }
+
+  /* Tab bar scroll-fade hints (mobile) */
+  .tabs-wrap{ position:relative; }
+  .tabs-fade{
+    position:absolute; top:0; bottom:10px; width:28px;
+    pointer-events:none; z-index:41;
+    opacity:0; transition:opacity .2s ease;
+  }
+  .tabs-fade.left{ left:0; background:linear-gradient(90deg, var(--bg), transparent); }
+  .tabs-fade.right{ right:0; background:linear-gradient(270deg, var(--bg), transparent); }
+  .tabs-fade.visible{ opacity:1; }  .flip-why{font-size:12px; color:var(--ink-dim); line-height:1.55;}
   .flip-src{font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--ink-faint); border-top:1px solid var(--line); padding-top:8px; margin-top:10px;}
 </style>
 </head>
@@ -1112,7 +1152,8 @@
   <div class="section-note" style="display:block; margin-top:8px;">The news sections below are refreshed automatically every morning by a scheduled GitHub Action — no manual click needed. Everything else on this dashboard is a periodic content update; ask Claude in chat when you want those refreshed.</div>
 </header>
 
-<div class="tabs">
+<div class="tabs-wrap">
+<div class="tabs" id="tabsScroller">
   <button class="tab-btn active" data-tab="overview" onclick="showTab('overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Overview</button>
   <button class="tab-btn" data-tab="pokemon" onclick="showTab('pokemon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a9 9 0 0 1 0 18 9 9 0 0 1 0-18z"/><circle cx="12" cy="12" r="2.5"/></svg>Pokémon TCG</button>
   <button class="tab-btn" data-tab="onepiece" onclick="showTab('onepiece')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 4 0 0 1 16 0"/><path d="M4 12a8 4 0 0 0 16 0"/><circle cx="12" cy="8.5" r="1.2" fill="currentColor" stroke="none"/></svg>One Piece TCG</button>
@@ -1121,6 +1162,13 @@
   <button class="tab-btn" data-tab="verdicts" onclick="showTab('verdicts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Set Verdicts</button>
   <button class="tab-btn" data-tab="phguide" onclick="showTab('phguide')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>PH Buying Guide</button>
 </div>
+<div class="tabs-fade left" id="tabsFadeLeft"></div>
+<div class="tabs-fade right visible" id="tabsFadeRight"></div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
 
 <main>
 
@@ -1253,14 +1301,11 @@
     <div class="section">
       <div class="section-head">
         <div class="section-title">Latest news <span class="tag">Pokémon TCG</span></div>
-        <div class="section-note" id="pokeUpdatedNote">auto-updated 02 Aug, 01:08 AM PHT</div>
+        <div class="section-note" id="pokeUpdatedNote">auto-updated daily · initializing on first Action run</div>
       </div>
 
       <div id="pokePulseWrap"></div>
-      <div class="card" id="pokemon-news-live" style="padding:4px 16px;"><div class="news-item"><div class="news-date">01 AUG</div><div class="news-body"><h4>New 5th MEGA Pokemon Card Gym Promo Cards Revealed, Features Mega Tatsugiri ex 17 Jul…<span class="live-badge">AUTO</span></h4></div></div>
-<div class="news-item"><div class="news-date">01 AUG</div><div class="news-body"><h4>Pokémon TCG: Mini Portfolio (Q4 2026) Revealed 16 Jul 2026 16:52 A new version of the…<span class="live-badge">AUTO</span></h4></div></div>
-<div class="news-item"><div class="news-date">01 AUG</div><div class="news-body"><h4>Pokemon TCG: Enhanced 2-Pack Blister (Gengar, Marshadow &amp; Team Rocket&#x27;s Mimikyu)…<span class="live-badge">AUTO</span></h4></div></div>
-<div class="news-item"><div class="news-date">01 AUG</div><div class="news-body"><h4>Mega Evolution - Pitch Black Full Digital Set List Revealed 10 Jul 2026 11:00 Mega…<span class="live-badge">AUTO</span></h4></div></div></div>
+      <div class="card" id="pokemon-news-live" style="padding:4px 16px; display:none;"></div>
       <div class="skeleton-wrap" id="pokeSkeleton" style="display:none;">
         <div class="card" style="padding:16px;">
           <div class="skeleton-line" style="width:30%;"></div>
@@ -1558,14 +1603,11 @@
     <div class="section">
       <div class="section-head">
         <div class="section-title">Latest news <span class="tag">One Piece TCG</span></div>
-        <div class="section-note" id="opUpdatedNote">auto-updated 02 Aug, 01:08 AM PHT</div>
+        <div class="section-note" id="opUpdatedNote">auto-updated daily · initializing on first Action run</div>
       </div>
 
       <div id="opPulseWrap"></div>
-      <div class="card" id="onepiece-news-live" style="padding:4px 16px;"><div class="news-item"><div class="news-date">01 AUG</div><div class="news-body"><h4>Premium Card Collection -Live Action Edition vol.2 Baroque Works- has been announced.<span class="live-badge">AUTO</span></h4></div></div>
-<div class="news-item"><div class="news-date">01 AUG</div><div class="news-body"><h4>Premium Card Collection -Live Action Edition vol.2 Straw Hat Crew- has been announced.<span class="live-badge">AUTO</span></h4></div></div>
-<div class="news-item"><div class="news-date">01 AUG</div><div class="news-body"><h4>C2E2 2026 has been updated.<span class="live-badge">AUTO</span></h4></div></div>
-<div class="news-item"><div class="news-date">01 AUG</div><div class="news-body"><h4>Banned/Restricted Card Addition Notice has been updated.<span class="live-badge">AUTO</span></h4></div></div></div>
+      <div class="card" id="onepiece-news-live" style="padding:4px 16px; display:none;"></div>
       <div class="skeleton-wrap" id="opSkeleton" style="display:none;">
         <div class="card" style="padding:16px;">
           <div class="skeleton-line" style="width:30%;"></div>
@@ -2197,6 +2239,46 @@
 
       </div>
 
+      <div class="term-label" style="margin-top:22px;">🌊 One Piece — better-sourced picks <span class="term-tag">TCGPlayer-backed data</span></div>
+      <div class="grid grid-2">
+
+        <div class="flip-card holo">
+          <div class="flip-top">
+            <div><div class="flip-name">Monkey.D.Luffy (012) — AA Gold-Stamped</div><div class="flip-set">Awakening of the New Era (OP-05)</div></div>
+            <div class="flip-conf high">High confidence</div>
+          </div>
+          <div class="flip-stat">📊 Currently the single most expensive One Piece card on the live TCGPlayer marketplace — a promotional 1-of-its-kind Alternate Art variant, described as this game's "1st Edition Blue-Eyes" moment</div>
+          <div class="flip-targets">
+            <div class="flip-target-box buy"><div class="lbl">FLOOR</div><div class="val">~$4,100</div></div>
+            <div class="flip-target-box sell"><div class="lbl">MARKET</div><div class="val">~$4,581</div></div>
+          </div>
+          <p class="flip-why">Too expensive for most table flips, but worth knowing as the ceiling reference for the whole game — if you're offered one at an expo well under $4,000, that's a real signal to verify authenticity carefully rather than assume a bargain.</p>
+          <div class="flip-src">Source: TCG Price Lookup, pulled from live TCGPlayer data, Apr 2026</div>
+        </div>
+
+        <div class="flip-card holo">
+          <div class="flip-top">
+            <div><div class="flip-name">Gol.D.Roger — Manga Secret Rare</div><div class="flip-set">Emperors in the New World (OP-09)</div></div>
+            <div class="flip-conf high">High confidence</div>
+          </div>
+          <div class="flip-stat">📊 Second-most expensive One Piece card on live TCGPlayer data — OP-09's Manga Rare treatment is described as dominating the upper tier of the whole market</div>
+          <div class="flip-buyrate">
+            <div class="lbl">Target seller buy-in (80–90% of resale)</div>
+            <div class="rates">
+              <div class="rate-item">$3,120 – $3,510<small>USD, 80–90% of $3,900</small></div>
+              <div class="rate-item">₱191,880 – ₱215,865<small>PHP @ ₱61.50/$1</small></div>
+            </div>
+          </div>
+          <div class="flip-targets">
+            <div class="flip-target-box buy"><div class="lbl">FLOOR</div><div class="val">~$3,500</div></div>
+            <div class="flip-target-box sell"><div class="lbl">MARKET</div><div class="val">~$3,900</div></div>
+          </div>
+          <p class="flip-why">Another grail-tier card, not a casual table flip — the value here is as a benchmark for grading Manga Secret Rares from this era of the game, and a reminder that OP-09 is worth checking closely if you come across sealed product from it.</p>
+          <div class="flip-src">Source: TCG Price Lookup, pulled from live TCGPlayer data, Apr 2026</div>
+        </div>
+
+      </div>
+
       <div class="term-label" style="margin-top:22px;">🌊 One Piece — lower-confidence sourcing, verify before acting</div>
       <div class="insight" style="margin-bottom:14px;">
         Being direct about data quality: One Piece pricing content online skews more toward SEO/content-marketing sites than Pokémon's TCGplayer-caliber reporting. The picks below come from a market guide that reads more promotional than TCGplayer's own blog — treat these as leads to verify yourself, not confirmed facts the way the Pokémon picks above are.
@@ -2346,8 +2428,16 @@
         <b style="color:var(--red);">Not financial advice.</b> Same disclaimer as the Analytics tab, worth repeating here specifically: these are opinions formed from public market data, not guarantees. Position size accordingly.
       </div>
 
+      <div class="search-row">
+        <div class="search-input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" class="search-input" id="verdictSearch" placeholder="Search sets or games…" oninput="filterVerdicts()">
+        </div>
+      </div>
+
       <div class="term-label">🔜 Upcoming sets <span class="term-tag">pre-release read — buy, wait, or skip</span></div>
-      <div class="grid grid-2">
+      <div class="grid grid-2" id="verdictsUpcomingGrid">
+      <div class="search-empty" id="verdictsUpcomingEmpty">No upcoming sets match your search.</div>
 
         <div class="verdict-card holo">
           <div class="verdict-top">
@@ -2430,7 +2520,8 @@
       </div>
 
       <div class="term-label" style="margin-top:26px;">✅ Completed / live sets <span class="term-tag">post-mortem — was the hype justified?</span></div>
-      <div class="grid grid-2">
+      <div class="grid grid-2" id="verdictsCompletedGrid">
+      <div class="search-empty" id="verdictsCompletedEmpty">No completed sets match your search.</div>
 
         <div class="verdict-card holo">
           <div class="verdict-top">
@@ -2691,6 +2782,7 @@
     document.getElementById(name).classList.add('active');
     tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
     window.scrollTo({top: 0, behavior:'smooth'});
+    if(window._observeRevealOnTabSwitch) window._observeRevealOnTabSwitch();
   }
 
   const tickerData = [
@@ -2835,7 +2927,65 @@
     runLandedCalc();
     initHoloEffect();
     initCountUp();
+    initBackToTop();
+    initScrollReveal();
+    initTabsFade();
   });
+
+  /* ================= FULL POLISH: back-to-top, reveal, tab fade ================= */
+
+  function initBackToTop(){
+    const btn = document.getElementById('backToTop');
+    if(!btn) return;
+    window.addEventListener('scroll', () => {
+      btn.classList.toggle('visible', window.scrollY > 500);
+    }, { passive: true });
+  }
+
+  function initScrollReveal(){
+    // Mark section-level blocks as reveal targets, but only within the
+    // currently active panel so switching tabs doesn't leave everything
+    // permanently invisible.
+    function tagRevealTargets(panel){
+      if(!panel) return;
+      panel.querySelectorAll(':scope > .section').forEach(el => {
+        if(!el.classList.contains('reveal')) el.classList.add('reveal');
+      });
+    }
+    document.querySelectorAll('.panel').forEach(tagRevealTargets);
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    function observeVisiblePanel(){
+      const active = document.querySelector('.panel.active');
+      if(!active) return;
+      active.querySelectorAll('.reveal:not(.in-view)').forEach(el => observer.observe(el));
+    }
+    observeVisiblePanel();
+    window._observeRevealOnTabSwitch = observeVisiblePanel;
+  }
+
+  function initTabsFade(){
+    const scroller = document.getElementById('tabsScroller');
+    const fadeLeft = document.getElementById('tabsFadeLeft');
+    const fadeRight = document.getElementById('tabsFadeRight');
+    if(!scroller) return;
+    function update(){
+      const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+      fadeLeft.classList.toggle('visible', scroller.scrollLeft > 8);
+      fadeRight.classList.toggle('visible', scroller.scrollLeft < maxScroll - 8);
+    }
+    scroller.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
 
   /* ================= V2: HOLO, SEARCH, SORT, COUNT-UP ================= */
 
@@ -2855,41 +3005,79 @@
       updateHoloPosition(card, e.clientX, e.clientY);
     }, { passive: true });
 
-    // Mobile/touch: finger-tracked sheen. CSS :hover doesn't reliably fire on
-    // touch devices, so we add/remove a class manually to show the effect
-    // for as long as the finger is down, following the touch point.
-    let activeTouchCard = null;
+    // Mobile: tilt-driven sheen using the device gyroscope. This is the actual
+    // fix — dragging a finger fights the browser's own scroll gesture and only
+    // ever delivers the first touch point, which is why it looked "static."
+    // Tilting the phone doesn't compete with scrolling at all, updates
+    // continuously, and matches how a real holo card catches light anyway.
+    let tiltEnabled = false;
+    let allHoloCards = [];
 
-    document.addEventListener('touchstart', (e) => {
-      const card = e.target.closest('.holo');
-      if(!card) return;
-      activeTouchCard = card;
-      card.classList.add('holo-active');
-      const t = e.touches[0];
-      updateHoloPosition(card, t.clientX, t.clientY);
-    }, { passive: true });
-
-    document.addEventListener('touchmove', (e) => {
-      if(!activeTouchCard) return;
-      const t = e.touches[0];
-      updateHoloPosition(activeTouchCard, t.clientX, t.clientY);
-    }, { passive: true });
-
-    function clearTouchHolo(){
-      if(!activeTouchCard) return;
-      // small delay so the shimmer is visible for a beat after lifting the finger
-      const card = activeTouchCard;
-      setTimeout(() => card.classList.remove('holo-active'), 400);
-      activeTouchCard = null;
+    function refreshHoloCardList(){
+      allHoloCards = Array.from(document.querySelectorAll('.holo'));
     }
-    document.addEventListener('touchend', clearTouchHolo, { passive: true });
-    document.addEventListener('touchcancel', clearTouchHolo, { passive: true });
+
+    function applyTilt(beta, gamma){
+      // beta: front-back tilt (-180 to 180), gamma: left-right tilt (-90 to 90)
+      // Map a comfortable holding-range into 0-100% sheen position.
+      const mx = Math.min(100, Math.max(0, 50 + (gamma || 0) * 1.8));
+      const my = Math.min(100, Math.max(0, 50 + ((beta || 0) - 45) * 1.2));
+      allHoloCards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        if(rect.bottom < 0 || rect.top > window.innerHeight) return; // skip offscreen cards
+        card.style.setProperty('--mx', mx + '%');
+        card.style.setProperty('--my', my + '%');
+        card.classList.add('holo-active');
+      });
+    }
+
+    function startTilt(){
+      if(tiltEnabled) return;
+      tiltEnabled = true;
+      refreshHoloCardList();
+      window.addEventListener('deviceorientation', (e) => {
+        applyTilt(e.beta, e.gamma);
+      }, { passive: true });
+      window.addEventListener('scroll', refreshHoloCardList, { passive: true });
+    }
+
+    const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+    if(isTouchDevice && typeof DeviceOrientationEvent !== 'undefined'){
+      if(typeof DeviceOrientationEvent.requestPermission === 'function'){
+        // iOS 13+: needs an explicit user gesture to grant motion permission
+        const grant = () => {
+          DeviceOrientationEvent.requestPermission()
+            .then(state => { if(state === 'granted') startTilt(); })
+            .catch(() => {});
+          document.removeEventListener('touchend', grant);
+        };
+        document.addEventListener('touchend', grant, { once: true, passive: true });
+      } else {
+        // Android / other: no permission gate needed
+        startTilt();
+      }
+
+      // Fallback so a card still lights up immediately on tap, before any
+      // orientation data has arrived (or if the device has no gyroscope).
+      document.addEventListener('touchstart', (e) => {
+        const card = e.target.closest('.holo');
+        if(!card) return;
+        const t = e.touches[0];
+        updateHoloPosition(card, t.clientX, t.clientY);
+        card.classList.add('holo-active');
+        if(!tiltEnabled){
+          setTimeout(() => card.classList.remove('holo-active'), 600);
+        }
+      }, { passive: true });
+    }
   }
 
-  function filterCards(gridId, inputId, emptyId){
+  function filterCards(gridId, inputId, emptyId, cardSelector){
+    cardSelector = cardSelector || '.chase-card';
     const q = document.getElementById(inputId).value.trim().toLowerCase();
     const grid = document.getElementById(gridId);
-    const cards = grid.querySelectorAll('.chase-card');
+    const cards = grid.querySelectorAll(cardSelector);
     let visibleCount = 0;
     cards.forEach(card => {
       const text = card.textContent.toLowerCase();
@@ -2898,6 +3086,11 @@
       if(match) visibleCount++;
     });
     document.getElementById(emptyId).style.display = visibleCount === 0 ? 'block' : 'none';
+  }
+
+  function filterVerdicts(){
+    filterCards('verdictsUpcomingGrid', 'verdictSearch', 'verdictsUpcomingEmpty', '.verdict-card');
+    filterCards('verdictsCompletedGrid', 'verdictSearch', 'verdictsCompletedEmpty', '.verdict-card');
   }
 
   function sortCards(gridId, btn){
