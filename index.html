@@ -840,6 +840,11 @@
   }
   .holo:hover::before, .holo:hover::after{ opacity:1; }
   .holo:hover{ border-color:var(--gold-dim); transform:translateY(-1px); transition:transform .2s ease, border-color .2s ease; }
+  .holo.holo-active::before, .holo.holo-active::after{ opacity:1; }
+  .holo.holo-active{ border-color:var(--gold-dim); transition:opacity .2s ease, border-color .2s ease; }
+  @media (hover: none) and (pointer: coarse){
+    .holo{ touch-action:pan-y; }
+  }
 
   /* ---------- Hero banner ---------- */
   .hero{
@@ -1005,6 +1010,89 @@
     color:var(--gold);
     margin-bottom:5px;
   }
+
+  /* ================= EXPO FLIP WATCH ================= */
+  .flip-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px;
+    position:relative;
+    overflow:hidden;
+  }
+  .flip-card::before{
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, var(--gold), var(--green), transparent);
+  }
+  .flip-top{display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:10px;}
+  .flip-name{font-size:14.5px; font-weight:700;}
+  .flip-set{font-size:11px; color:var(--ink-faint); margin-top:2px;}
+  .flip-conf{
+    font-family:'JetBrains Mono',monospace;
+    font-size:8.5px;
+    padding:2px 7px;
+    border-radius:8px;
+    white-space:nowrap;
+    text-transform:uppercase;
+  }
+  .flip-conf.high{background:rgba(95,191,138,0.14); color:var(--green); border:1px solid rgba(95,191,138,0.35);}
+  .flip-conf.med{background:rgba(232,179,74,0.14); color:var(--gold); border:1px solid rgba(232,179,74,0.35);}
+  .flip-targets{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin:10px 0;
+  }
+  .flip-target-box{
+    background:var(--surface-2);
+    border-radius:7px;
+    padding:9px 10px;
+    text-align:center;
+  }
+  .flip-target-box .lbl{font-family:'JetBrains Mono',monospace; font-size:8.5px; color:var(--ink-faint); letter-spacing:0.05em;}
+  .flip-target-box .val{font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; margin-top:3px;}
+  .flip-target-box.buy .val{color:var(--green);}
+  .flip-target-box.sell .val{color:var(--gold);}
+  .flip-margin{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    text-align:center;
+    color:var(--ink-dim);
+    margin:-4px 0 10px;
+  }
+  .flip-margin b{color:var(--green);}
+  .flip-stat{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--ph-blue);
+    background:rgba(61,110,242,0.08);
+    border:1px solid rgba(61,110,242,0.25);
+    border-radius:6px;
+    padding:6px 10px;
+    margin-bottom:10px;
+  }
+  .flip-stat b{color:var(--ph-blue);}
+  .flip-buyrate{
+    background:linear-gradient(135deg, rgba(95,191,138,0.10), rgba(95,191,138,0.02));
+    border:1px solid rgba(95,191,138,0.3);
+    border-radius:8px;
+    padding:10px 12px;
+    margin-bottom:10px;
+  }
+  .flip-buyrate .lbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    color:var(--green);
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    margin-bottom:4px;
+  }
+  .flip-buyrate .rates{display:flex; gap:14px; flex-wrap:wrap;}
+  .flip-buyrate .rate-item{font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--ink);}
+  .flip-buyrate .rate-item small{display:block; color:var(--ink-faint); font-size:8.5px; font-weight:400; margin-top:1px;}
+  .flip-why{font-size:12px; color:var(--ink-dim); line-height:1.55;}
+  .flip-src{font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--ink-faint); border-top:1px solid var(--line); padding-top:8px; margin-top:10px;}
 </style>
 </head>
 <body>
@@ -1165,34 +1253,11 @@
     <div class="section">
       <div class="section-head">
         <div class="section-title">Latest news <span class="tag">Pokémon TCG</span></div>
-        <div class="section-note" id="pokeUpdatedNote">auto-updated 01 Aug, 10:34 PM PHT</div>
+        <div class="section-note" id="pokeUpdatedNote">auto-updated daily · initializing on first Action run</div>
       </div>
 
       <div id="pokePulseWrap"></div>
-      <div class="card" id="pokemon-news-live" style="padding:4px 16px;"><div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>New 5th MEGA Pokemon Card Gym Promo Cards Revealed, Features Mega Tatsugiri ex 17 Jul 2…<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div>
-<div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>Pokémon TCG: Mini Portfolio (Q4 2026) Revealed 16 Jul 2026 16:52 A new version of the M…<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div>
-<div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>Pokemon TCG: Enhanced 2-Pack Blister (Gengar, Marshadow &amp; Team Rocket&#x27;s Mimikyu) Reveal…<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div>
-<div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>Mega Evolution - Pitch Black Full Digital Set List Revealed 10 Jul 2026 11:00 Mega Evol…<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div></div>
+      <div class="card" id="pokemon-news-live" style="padding:4px 16px; display:none;"></div>
       <div class="skeleton-wrap" id="pokeSkeleton" style="display:none;">
         <div class="card" style="padding:16px;">
           <div class="skeleton-line" style="width:30%;"></div>
@@ -1490,34 +1555,11 @@
     <div class="section">
       <div class="section-head">
         <div class="section-title">Latest news <span class="tag">One Piece TCG</span></div>
-        <div class="section-note" id="opUpdatedNote">auto-updated 01 Aug, 10:34 PM PHT</div>
+        <div class="section-note" id="opUpdatedNote">auto-updated daily · initializing on first Action run</div>
       </div>
 
       <div id="opPulseWrap"></div>
-      <div class="card" id="onepiece-news-live" style="padding:4px 16px;"><div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>Premium Card Collection -Live Action Edition vol.2 Baroque Works- has been announced.<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div>
-<div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>Premium Card Collection -Live Action Edition vol.2 Straw Hat Crew- has been announced.<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div>
-<div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>C2E2 2026 has been updated.<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div>
-<div class="news-item">
-          <div class="news-date">01 AUG</div>
-          <div class="news-body">
-            <h4>Banned/Restricted Card Addition Notice has been updated.<span class="live-badge">AUTO</span></h4>
-          </div>
-        </div></div>
+      <div class="card" id="onepiece-news-live" style="padding:4px 16px; display:none;"></div>
       <div class="skeleton-wrap" id="opSkeleton" style="display:none;">
         <div class="card" style="padding:16px;">
           <div class="skeleton-line" style="width:30%;"></div>
@@ -2044,6 +2086,154 @@
       </div>
 
       <div class="section-note" style="margin-top:14px; display:block;">Every price above has a report date next to it on purpose — TCG singles move fast, and a number from February isn't the same as a number from July. Before acting on any "Watch" or "Accumulate" pick, pull the current listing price yourself (TCGplayer, SNKRDUNK, or your local shop) and compare it against the range shown here.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">🎪 Expo Flip Watch <span class="tag">buy target → sell target</span></div>
+        <div class="section-note">for the vendor table, not the desk</div>
+      </div>
+
+      <div class="insight" style="margin-bottom:16px;">
+        Different framing from the picks above: these are cards priced for an in-person buying decision — a target you'd actually negotiate toward at a booth, not just a number to watch on a chart. <b>Buy target</b> is roughly the current market floor or below; <b>sell target</b> is where recent trading actually clears. The gap between them is your margin before fees, grading, or holding time — not a guarantee. Where the data supports it, each card also shows a <b>seller buy-in rate</b> — 80–90% of the resale value, in both USD and PHP, based on the most recent sold prices I could find on eBay and cross-referenced against TCGplayer's own market data (not just asking prices — Amazon's Pokémon/One Piece card marketplace has too few completed-sale listings to be a reliable comp source, so that's excluded rather than padded in). That's the realistic price range to offer a seller, not the price you'd list at. Two cards below don't get this calculation — Umbreon ex 161 is explicitly historical, not a live target, and Zoro OP-06-118 has no confirmed price to calculate from.
+      </div>
+      <div class="insight" style="margin-bottom:20px; border-color:var(--red); background:linear-gradient(135deg, rgba(226,104,95,0.08), rgba(226,104,95,0.02));">
+        <b style="color:var(--red);">Expo-specific risks these numbers don't cover:</b> condition grading in bad table lighting, counterfeits (see the PH Buying Guide tab), a vendor who already knows the market and won't sell below it, and your own liquidity — a "margin" only exists once you've actually resold, not the moment you buy.
+      </div>
+      <div class="section-note" style="margin-bottom:14px; display:block;">Worth knowing what got left out: I found a "market alert" style article claiming a different Ascended Heroes card had spiked to $4,500+ on "institutional whale buying." That's the language of hype content, not data reporting, and it wasn't corroborated anywhere else — so it's excluded rather than repeated as fact. If a number looks too dramatic to be true, that's usually because it is.</div>
+
+      <div class="term-label">🔴 High volatility — bigger spread, bigger risk</div>
+      <div class="grid grid-2">
+
+        <div class="flip-card holo">
+          <div class="flip-top">
+            <div><div class="flip-name">Mega Charizard X ex 125</div><div class="flip-set">Phantasmal Flames</div></div>
+            <div class="flip-conf high">High confidence</div>
+          </div>
+          <div class="flip-stat">📊 <b>~22,500</b> total PSA-graded copies as of Apr 2026 — high submission volume signals sustained collector demand, not a fading fad</div>
+          <div class="flip-buyrate">
+            <div class="lbl">Target seller buy-in (80–90% of resale)</div>
+            <div class="rates">
+              <div class="rate-item">$600 – $675<small>USD, 80–90% of $750</small></div>
+              <div class="rate-item">₱36,900 – ₱41,513<small>PHP @ ₱61.50/$1</small></div>
+            </div>
+          </div>
+          <div class="flip-targets">
+            <div class="flip-target-box buy"><div class="lbl">BUY TARGET</div><div class="val">$450–500</div></div>
+            <div class="flip-target-box sell"><div class="lbl">SELL TARGET</div><div class="val">~$750</div></div>
+          </div>
+          <div class="flip-margin">potential margin: <b>~50-65%</b> before fees</div>
+          <p class="flip-why">The set's ultimate chase card, and genuinely volatile — sales ranged $500–$1,000 in the past month alone, with listings seen as low as $428. The grading volume matters here: ~22,500 copies submitted to PSA alone means this isn't a thin, illiquid market — there's real depth on both sides, which is exactly what makes a flip executable rather than theoretical.</p>
+          <div class="flip-src">Sources: TCGplayer Price Trends (29 Jul 2026); PSA population data via eBay listing cert data (Apr 2026)</div>
+        </div>
+
+        <div class="flip-card holo">
+          <div class="flip-top">
+            <div><div class="flip-name">Pikachu ex #276/217 SIR — "Treekachu"</div><div class="flip-set">Mega Evolution: Ascended Heroes</div></div>
+            <div class="flip-conf high">High confidence</div>
+          </div>
+          <div class="flip-stat">📊 <b>~1-in-1,540 packs</b> pull odds (1 SIR per 70 packs × 1-of-22 SIRs, per PokeBeach) → ≈$22,000 expected cost to pull one from sealed ETBs at ~$130 each</div>
+          <div class="flip-buyrate">
+            <div class="lbl">Target seller buy-in (80–90% of resale)</div>
+            <div class="rates">
+              <div class="rate-item">$960 – $1,080<small>USD, 80–90% of $1,200</small></div>
+              <div class="rate-item">₱59,040 – ₱66,420<small>PHP @ ₱61.50/$1</small></div>
+            </div>
+          </div>
+          <div class="flip-targets">
+            <div class="flip-target-box buy"><div class="lbl">BUY TARGET</div><div class="val">≤$1,000</div></div>
+            <div class="flip-target-box sell"><div class="lbl">SELL TARGET</div><div class="val">$1,200+</div></div>
+          </div>
+          <div class="flip-margin">potential margin: <b>~20%+</b> before fees</div>
+          <p class="flip-why">The community nickname for Pikachu ex #276/217 — forest-themed art, rocketed $600→$1,400 in a month, now retracing from that peak. The pull-rate math is the real demand floor here: even if hype fully died tomorrow, pulling one from sealed product costs roughly $22,000 in ETBs on average — that's a structural price anchor, not just sentiment. Big-ticket flip, not a beginner one; confirm the current floor before committing this much per copy.</p>
+          <div class="flip-src">Sources: TCGplayer Price Trends (29 Jul 2026); pull-rate data per PokeBeach, cited via PokeSats analysis (22 May 2026)</div>
+        </div>
+
+      </div>
+
+      <div class="term-label" style="margin-top:22px;">🟡 Steadier — smaller spread, easier to move</div>
+      <div class="grid grid-2">
+
+        <div class="flip-card holo">
+          <div class="flip-top">
+            <div><div class="flip-name">Giratina VSTAR</div><div class="flip-set">Crown Zenith · Galarian Gallery</div></div>
+            <div class="flip-conf high">High confidence</div>
+          </div>
+          <div class="flip-buyrate">
+            <div class="lbl">Target seller buy-in (80–90% of resale)</div>
+            <div class="rates">
+              <div class="rate-item">$338 – $380<small>USD, 80–90% of $422 midpoint</small></div>
+              <div class="rate-item">₱20,787 – ₱23,370<small>PHP @ ₱61.50/$1</small></div>
+            </div>
+          </div>
+          <div class="flip-targets">
+            <div class="flip-target-box buy"><div class="lbl">BUY TARGET</div><div class="val">~$385</div></div>
+            <div class="flip-target-box sell"><div class="lbl">SELL TARGET</div><div class="val">$420–425</div></div>
+          </div>
+          <div class="flip-margin">potential margin: <b>~10%</b> before fees</div>
+          <p class="flip-why">Down almost 10% this week alone, off a six-week peak of $425 — but it's the most expensive card in the Galarian Gallery subset, so demand has a real floor. Smaller margin than the Charizard/Treekachu pair, but a much more liquid, easier-to-move card at expos.</p>
+          <div class="flip-src">Source: TCGplayer "Biggest Price Drops," 22 Jul 2026</div>
+        </div>
+
+        <div class="flip-card holo">
+          <div class="flip-top">
+            <div><div class="flip-name">Umbreon ex 161 — SIR</div><div class="flip-set">Prismatic Evolutions</div></div>
+            <div class="flip-conf med">Pattern reference</div>
+          </div>
+          <div class="flip-targets">
+            <div class="flip-target-box buy"><div class="lbl">DIP LOW</div><div class="val">$799</div></div>
+            <div class="flip-target-box sell"><div class="lbl">RECOVERED TO</div><div class="val">$955</div></div>
+          </div>
+          <div class="flip-margin">historical pattern, not a live target</div>
+          <p class="flip-why">Not a current flip — this data is from January 2026, too old to act on directly. Included as the clearest proof this exact pattern (steep post-release dip, then recovery) has played out before: release-day $1,400 → all-time-low $799 → rebounding. Worth knowing the shape of this pattern before judging a similar dip on a newer SIR as "dead."</p>
+          <div class="flip-src">Source: TCGplayer "Biggest Price Spikes," 07 Jan 2026 — stale, pattern only</div>
+        </div>
+
+      </div>
+
+      <div class="term-label" style="margin-top:22px;">🌊 One Piece — lower-confidence sourcing, verify before acting</div>
+      <div class="insight" style="margin-bottom:14px;">
+        Being direct about data quality: One Piece pricing content online skews more toward SEO/content-marketing sites than Pokémon's TCGplayer-caliber reporting. The picks below come from a market guide that reads more promotional than TCGplayer's own blog — treat these as leads to verify yourself, not confirmed facts the way the Pokémon picks above are.
+      </div>
+      <div class="grid grid-2">
+
+        <div class="flip-card holo">
+          <div class="flip-top">
+            <div><div class="flip-name">Roronoa Zoro OP-06-118</div><div class="flip-set">One Piece OP-06</div></div>
+            <div class="flip-conf med">Unverified — 1 source</div>
+          </div>
+          <div class="flip-targets">
+            <div class="flip-target-box buy"><div class="lbl">GUIDE SAYS</div><div class="val">Strong Hold</div></div>
+            <div class="flip-target-box sell"><div class="lbl">CONFIDENCE</div><div class="val">Medium</div></div>
+          </div>
+          <p class="flip-why">Flagged as a "strong hold" by a third-party One Piece market guide alongside Portgas D. Ace OP-13-119. I haven't independently confirmed a specific price range for this one — check the live TCGplayer listing before treating this as a buy signal.</p>
+          <div class="flip-src">Source: TCG-focused market guide, Jun 2026 — single source, not cross-verified</div>
+        </div>
+
+        <div class="flip-card holo">
+          <div class="flip-top">
+            <div><div class="flip-name">OP-13 Sealed Booster Box</div><div class="flip-set">One Piece OP-13</div></div>
+            <div class="flip-conf med">Unverified — 1 source</div>
+          </div>
+          <div class="flip-buyrate" style="border-color:rgba(232,179,74,0.3); background:linear-gradient(135deg, rgba(232,179,74,0.08), rgba(232,179,74,0.02));">
+            <div class="lbl" style="color:var(--gold);">Target seller buy-in (80–90% of resale) — low confidence</div>
+            <div class="rates">
+              <div class="rate-item">$562 – $632<small>USD, 80–90% of $702</small></div>
+              <div class="rate-item">₱34,563 – ₱38,868<small>PHP @ ₱61.50/$1 — verify $702 first</small></div>
+            </div>
+          </div>
+          <div class="flip-targets">
+            <div class="flip-target-box buy"><div class="lbl">RETAIL MSRP</div><div class="val">~$178</div></div>
+            <div class="flip-target-box sell"><div class="lbl">SECONDARY</div><div class="val">~$702</div></div>
+          </div>
+          <div class="flip-margin">reported <b>+296%</b> vs retail</div>
+          <p class="flip-why">A big claimed gap between MSRP and secondary sealed price — but this comes from one guide, not cross-checked against TCGplayer directly the way the Pokémon box data elsewhere in this dashboard is. Worth checking a live sealed listing before treating $702 as reliable.</p>
+          <div class="flip-src">Source: TCG-focused market guide, Jun 2026 — single source, not cross-verified</div>
+        </div>
+
+      </div>
+
+      <div class="section-note" style="margin-top:14px; display:block;">Expo Flip Watch skews toward Pokémon right now because that's where the sourcing is genuinely strong (TCGplayer's own trend reports). As better-sourced One Piece data becomes available, ask Claude to expand this section — I'd rather show fewer, verified One Piece picks than pad the list with numbers I can't back up.</div>
     </div>
 
     <div class="section">
@@ -2644,15 +2834,50 @@
   /* ================= V2: HOLO, SEARCH, SORT, COUNT-UP ================= */
 
   function initHoloEffect(){
+    function updateHoloPosition(card, clientX, clientY){
+      const rect = card.getBoundingClientRect();
+      const mx = ((clientX - rect.left) / rect.width) * 100;
+      const my = ((clientY - rect.top) / rect.height) * 100;
+      card.style.setProperty('--mx', mx + '%');
+      card.style.setProperty('--my', my + '%');
+    }
+
+    // Desktop: mouse-tracked sheen, CSS :hover already handles show/hide
     document.addEventListener('mousemove', (e) => {
       const card = e.target.closest('.holo');
       if(!card) return;
-      const rect = card.getBoundingClientRect();
-      const mx = ((e.clientX - rect.left) / rect.width) * 100;
-      const my = ((e.clientY - rect.top) / rect.height) * 100;
-      card.style.setProperty('--mx', mx + '%');
-      card.style.setProperty('--my', my + '%');
+      updateHoloPosition(card, e.clientX, e.clientY);
     }, { passive: true });
+
+    // Mobile/touch: finger-tracked sheen. CSS :hover doesn't reliably fire on
+    // touch devices, so we add/remove a class manually to show the effect
+    // for as long as the finger is down, following the touch point.
+    let activeTouchCard = null;
+
+    document.addEventListener('touchstart', (e) => {
+      const card = e.target.closest('.holo');
+      if(!card) return;
+      activeTouchCard = card;
+      card.classList.add('holo-active');
+      const t = e.touches[0];
+      updateHoloPosition(card, t.clientX, t.clientY);
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+      if(!activeTouchCard) return;
+      const t = e.touches[0];
+      updateHoloPosition(activeTouchCard, t.clientX, t.clientY);
+    }, { passive: true });
+
+    function clearTouchHolo(){
+      if(!activeTouchCard) return;
+      // small delay so the shimmer is visible for a beat after lifting the finger
+      const card = activeTouchCard;
+      setTimeout(() => card.classList.remove('holo-active'), 400);
+      activeTouchCard = null;
+    }
+    document.addEventListener('touchend', clearTouchHolo, { passive: true });
+    document.addEventListener('touchcancel', clearTouchHolo, { passive: true });
   }
 
   function filterCards(gridId, inputId, emptyId){
