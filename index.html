@@ -3005,72 +3005,36 @@
       updateHoloPosition(card, e.clientX, e.clientY);
     }, { passive: true });
 
-    // Mobile: tilt-driven sheen using the device gyroscope. This is the actual
-    // fix — dragging a finger fights the browser's own scroll gesture and only
-    // ever delivers the first touch point, which is why it looked "static."
-    // Tilting the phone doesn't compete with scrolling at all, updates
-    // continuously, and matches how a real holo card catches light anyway.
-    let tiltEnabled = false;
-    let allHoloCards = [];
+    // Mobile: the foil follows your finger directly as you slide it, same as
+    // dragging a real card through light. Cards use touch-action:pan-y (see
+    // CSS), which tells the browser it can scroll vertically without waiting
+    // on JS — that lets touchmove keep firing continuously alongside native
+    // scrolling instead of the browser swallowing the gesture.
+    let activeTouchCard = null;
 
-    function refreshHoloCardList(){
-      allHoloCards = Array.from(document.querySelectorAll('.holo'));
+    document.addEventListener('touchstart', (e) => {
+      const card = e.target.closest('.holo');
+      if(!card) return;
+      activeTouchCard = card;
+      card.classList.add('holo-active');
+      const t = e.touches[0];
+      updateHoloPosition(card, t.clientX, t.clientY);
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+      if(!activeTouchCard) return;
+      const t = e.touches[0];
+      updateHoloPosition(activeTouchCard, t.clientX, t.clientY);
+    }, { passive: true });
+
+    function releaseTouchHolo(){
+      if(!activeTouchCard) return;
+      const card = activeTouchCard;
+      setTimeout(() => card.classList.remove('holo-active'), 350);
+      activeTouchCard = null;
     }
-
-    function applyTilt(beta, gamma){
-      // beta: front-back tilt (-180 to 180), gamma: left-right tilt (-90 to 90)
-      // Map a comfortable holding-range into 0-100% sheen position.
-      const mx = Math.min(100, Math.max(0, 50 + (gamma || 0) * 1.8));
-      const my = Math.min(100, Math.max(0, 50 + ((beta || 0) - 45) * 1.2));
-      allHoloCards.forEach(card => {
-        const rect = card.getBoundingClientRect();
-        if(rect.bottom < 0 || rect.top > window.innerHeight) return; // skip offscreen cards
-        card.style.setProperty('--mx', mx + '%');
-        card.style.setProperty('--my', my + '%');
-        card.classList.add('holo-active');
-      });
-    }
-
-    function startTilt(){
-      if(tiltEnabled) return;
-      tiltEnabled = true;
-      refreshHoloCardList();
-      window.addEventListener('deviceorientation', (e) => {
-        applyTilt(e.beta, e.gamma);
-      }, { passive: true });
-      window.addEventListener('scroll', refreshHoloCardList, { passive: true });
-    }
-
-    const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-
-    if(isTouchDevice && typeof DeviceOrientationEvent !== 'undefined'){
-      if(typeof DeviceOrientationEvent.requestPermission === 'function'){
-        // iOS 13+: needs an explicit user gesture to grant motion permission
-        const grant = () => {
-          DeviceOrientationEvent.requestPermission()
-            .then(state => { if(state === 'granted') startTilt(); })
-            .catch(() => {});
-          document.removeEventListener('touchend', grant);
-        };
-        document.addEventListener('touchend', grant, { once: true, passive: true });
-      } else {
-        // Android / other: no permission gate needed
-        startTilt();
-      }
-
-      // Fallback so a card still lights up immediately on tap, before any
-      // orientation data has arrived (or if the device has no gyroscope).
-      document.addEventListener('touchstart', (e) => {
-        const card = e.target.closest('.holo');
-        if(!card) return;
-        const t = e.touches[0];
-        updateHoloPosition(card, t.clientX, t.clientY);
-        card.classList.add('holo-active');
-        if(!tiltEnabled){
-          setTimeout(() => card.classList.remove('holo-active'), 600);
-        }
-      }, { passive: true });
-    }
+    document.addEventListener('touchend', releaseTouchHolo, { passive: true });
+    document.addEventListener('touchcancel', releaseTouchHolo, { passive: true });
   }
 
   function filterCards(gridId, inputId, emptyId, cardSelector){
