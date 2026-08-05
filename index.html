@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- FX_DEBUG [2026-08-05 15:39 PHT]: usd_php=61.04 jpy_php=0.387 | cdn.jsdelivr.net:HTTP200 OK -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>APEX TCG INTEL PH — Pokémon &amp; One Piece Market Terminal</title>
@@ -972,7 +973,7 @@
   <div class="eyebrow">APEX Intel · ask Claude to refresh <span class="flag-chip">🇵🇭 MANILA EDITION</span></div>
   <h1>TCG Market <span>Terminal</span></h1>
   <p class="sub">Prints, allocation, pre-orders, and the singles worth chasing across Pokémon TCG and One Piece Card Game — localized for Filipino collectors: PHP pricing, local shops, customs rules, and the import math.</p>
-  <div class="snapshot-line" id="snapshotLine">Manually refreshed 01 AUG 2026 · base reference 31 JUL 2026 · Manila, PH (GMT+8) · ref. rate US$1 ≈ ₱61.50 · ¥1 ≈ ₱0.383 · figures from TCGplayer, SNKRDUNK, PokeBeach, tcgTalk PH, Bandai/TPCi official channels</div>
+  <div class="snapshot-line" id="snapshotLine">Manually refreshed 01 AUG 2026 · base reference 31 JUL 2026 · Manila, PH (GMT+8) · ref. rate US$1 ≈ ₱61.04 · ¥1 ≈ ₱0.387 · figures from TCGplayer, SNKRDUNK, PokeBeach, tcgTalk PH, Bandai/TPCi official channels</div>
   <div class="live-row">
     <span class="status-pill" id="statusPill"><span class="sdot"></span><span id="statusText">Static reference · 31 Jul 2026</span></span>
     <button class="refresh-btn" id="refreshBtn" onclick="refreshFeed()">
@@ -1122,11 +1123,14 @@
     <div class="section">
       <div class="section-head">
         <div class="section-title">Latest news <span class="tag">Pokémon TCG</span></div>
-        <div class="section-note" id="pokeUpdatedNote">static reference · click "Try live update" or ask Claude to refresh</div>
+        <div class="section-note" id="pokeUpdatedNote">auto-updated 05 Aug, 03:39 PM PHT</div>
       </div>
 
       <div id="pokePulseWrap"></div>
-      <div class="card" id="pokemon-news-live" style="padding:4px 16px; display:none;"></div>
+      <div class="card" id="pokemon-news-live" style="padding:4px 16px;"><div class="news-item"><div class="news-date">05 AUG</div><div class="news-body"><h4>New 5th MEGA Pokemon Card Gym Promo Cards Revealed, Features Mega Tatsugiri ex 17 Jul…<span class="live-badge">AUTO</span></h4></div></div>
+<div class="news-item"><div class="news-date">05 AUG</div><div class="news-body"><h4>Pokémon TCG: Mini Portfolio (Q4 2026) Revealed 16 Jul 2026 16:52 A new version of the…<span class="live-badge">AUTO</span></h4></div></div>
+<div class="news-item"><div class="news-date">05 AUG</div><div class="news-body"><h4>Pokemon TCG: Enhanced 2-Pack Blister (Gengar, Marshadow &amp; Team Rocket&#x27;s Mimikyu)…<span class="live-badge">AUTO</span></h4></div></div>
+<div class="news-item"><div class="news-date">05 AUG</div><div class="news-body"><h4>Mega Evolution - Pitch Black Full Digital Set List Revealed 10 Jul 2026 11:00 Mega…<span class="live-badge" style="color:var(--gold);border-color:rgba(232,179,74,.4);background:rgba(232,179,74,.1);">⚠ NEW DATE?</span></h4></div></div></div>
       <div class="skeleton-wrap" id="pokeSkeleton" style="display:none;">
         <div class="card" style="padding:16px;">
           <div class="skeleton-line" style="width:30%;"></div>
@@ -1424,11 +1428,14 @@
     <div class="section">
       <div class="section-head">
         <div class="section-title">Latest news <span class="tag">One Piece TCG</span></div>
-        <div class="section-note" id="opUpdatedNote">static reference · click "Try live update" or ask Claude to refresh</div>
+        <div class="section-note" id="opUpdatedNote">auto-updated 05 Aug, 03:39 PM PHT</div>
       </div>
 
       <div id="opPulseWrap"></div>
-      <div class="card" id="onepiece-news-live" style="padding:4px 16px; display:none;"></div>
+      <div class="card" id="onepiece-news-live" style="padding:4px 16px;"><div class="news-item"><div class="news-date">05 AUG</div><div class="news-body"><h4>Premium Card Collection -Live Action Edition vol.2 Baroque Works- has been announced.<span class="live-badge">AUTO</span></h4></div></div>
+<div class="news-item"><div class="news-date">05 AUG</div><div class="news-body"><h4>Premium Card Collection -Live Action Edition vol.2 Straw Hat Crew- has been announced.<span class="live-badge">AUTO</span></h4></div></div>
+<div class="news-item"><div class="news-date">05 AUG</div><div class="news-body"><h4>C2E2 2026 has been updated.<span class="live-badge">AUTO</span></h4></div></div>
+<div class="news-item"><div class="news-date">05 AUG</div><div class="news-body"><h4>Banned/Restricted Card Addition Notice has been updated.<span class="live-badge">AUTO</span></h4></div></div></div>
       <div class="skeleton-wrap" id="opSkeleton" style="display:none;">
         <div class="card" style="padding:16px;">
           <div class="skeleton-line" style="width:30%;"></div>
@@ -2511,8 +2518,8 @@ Include exactly 4 news items, most recent first, each about a distinct story. Ou
 
   /* ================= LANDED COST CALCULATOR ================= */
 
-  const FX_USD_PHP = 61.50;
-  const FX_JPY_PHP = 0.383;
+  const FX_USD_PHP = 61.04;
+  const FX_JPY_PHP = 0.387;
   const CUSTOMS_THRESHOLD_PHP = 10000;
 
   function runLandedCalc(){
